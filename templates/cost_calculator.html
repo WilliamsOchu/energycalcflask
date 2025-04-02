@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Electrical Energy Cost Calculator</title>
+    <style>
+        .device-entry {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Electrical Energy Cost Calculator</h1>
+
+    <form method="POST" action="/cost">
+        <div>
+            <h2>Calculate Energy Cost</h2>
+            <p>Choose how you provided the energy information:</p>
+            <div>
+                <input type="radio" id="individual_energy" name="energy_mode" value="individual" checked>
+                <label for="individual_energy">Entered individual device power and time</label>
+            </div>
+            <div>
+                <input type="radio" id="total_energy" name="energy_mode" value="total">
+                <label for="total_energy">Entered total power and total time</label>
+            </div>
+        </div>
+        <br>
+
+        <div id="individual-input" class="energy-input-section">
+            <h3>Enter Individual Device Power and Usage Time</h3>
+            <div id="energy-devices-container">
+                <div class="device-entry">
+                    <label for="device_name_0">Device Name:</label>
+                    <input type="text" id="device_name_0" name="device_name" placeholder="Enter device name">
+                    <label for="device_power_0">Power (Watts):</label>
+                    <input type="text" id="device_power_0" name="device_power" placeholder="Enter power">
+                    <label for="device_time_0">Usage Time (Hours):</label>
+                    <input type="text" id="device_time_0" name="device_time" placeholder="Enter usage time">
+                </div>
+            </div>
+            <button type="button" onclick="addEnergyDevice()">Add Another Device</button>
+        </div>
+
+        <div id="total-input" class="energy-input-section" style="display:none;">
+            <h3>Enter Total Power and Total Time</h3>
+            <label for="total_power">Total Power (Watts):</label>
+            <input type="text" id="total_power" name="total_power" placeholder="Enter total power"><br><br>
+            <label for="total_time">Total Time (Hours):</label>
+            <input type="text" id="total_time" name="total_time" placeholder="Enter total time"><br>
+        </div>
+        <br>
+
+        <div>
+            <h2>Enter Unit Cost of Energy</h2>
+            <label for="unit_cost">Unit Cost (e.g., ₦/kWh):</label>
+            <input type="text" id="unit_cost" name="unit_cost" placeholder="Enter unit cost"><br>
+        </div>
+        <br>
+
+        <input type="submit" value="Calculate Total Cost">
+    </form>
+
+    {% if error %}
+        <p style="color:red;">Error: {{ error }}</p>
+    {% endif %}
+
+    {% if total_cost > 0 %}
+        <h3>Total Energy Cost: {{ "%.2f"|format(total_cost) }}</h3>
+    {% elif request.method == 'POST' and not error %}
+        <p>No energy data provided to calculate cost.</p>
+    {% endif %}
+
+    <p><a href="/">Calculate Power Consumption</a> | <a href="/energy">Calculate Energy Consumption</a></p>
+
+    <script>
+        let energyDeviceCount = 1;
+        const individualInput = document.getElementById('individual-input');
+        const totalInput = document.getElementById('total-input');
+        const individualRadio = document.getElementById('individual_energy');
+        const totalRadio = document.getElementById('total_energy');
+
+        function addEnergyDevice() {
+            const container = document.getElementById('energy-devices-container');
+            const newDiv = document.createElement('div');
+            newDiv.classList.add('device-entry');
+            newDiv.innerHTML = `
+                <label for="device_name_${energyDeviceCount}">Device Name:</label>
+                <input type="text" id="device_name_${energyDeviceCount}" name="device_name" placeholder="Enter device name">
+                <label for="device_power_${energyDeviceCount}">Power (Watts):</label>
+                <input type="text" id="device_power_${energyDeviceCount}" name="device_power" placeholder="Enter power">
+                <label for="device_time_${energyDeviceCount}">Usage Time (Hours):</label>
+                <input type="text" id="device_time_${energyDeviceCount}" name="device_time" placeholder="Enter usage time">
+            `;
+            container.appendChild(newDiv);
+            energyDeviceCount++;
+        }
+
+        individualRadio.addEventListener('change', function() {
+            individualInput.style.display = 'block';
+            totalInput.style.display = 'none';
+        });
+
+        totalRadio.addEventListener('change', function() {
+            individualInput.style.display = 'none';
+            totalInput.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
