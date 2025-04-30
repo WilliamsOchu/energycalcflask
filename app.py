@@ -12,7 +12,12 @@ available_devices = {
     "Light Bulb (LED)": None,
 }
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+@app.route('/power', methods=['GET', 'POST'])
 def power_calculator():
     total_power = 0
     device_entries = []  # List to store device information entered by the user
@@ -188,4 +193,4 @@ def cost_calculator():
                            error=error)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True)

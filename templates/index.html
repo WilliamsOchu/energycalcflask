@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naija Energy Hub</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative; /* Needed for absolute positioning of chat button */
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .button:hover {
+            background-color: #218838;
+        }
+        .container-grid {
+            max-width: 1200px;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 20px;
+        }
+        .notes-container {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .main-container {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .hero-container {
+            max-width: 1000px; /* Increased max-width */
+            margin: 20px auto;
+            padding: 30px; /* Increased padding */
+            background-color: #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .disclaimer {
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 10px;
+            font-size: 0.9em;
+            color: #666;
+            text-align: center;
+        }
+
+        .button-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+            gap: 150px;
+            width: 100%;
+        }
+
+        .round-button {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            font-size: 1.3em;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            outline: none;
+            border: 2px solid transparent;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .round-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            border-color: #007bff;
+        }
+
+        .round-button:active {
+            background-color: #004080;
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border-color: transparent;
+        }
+
+        .new-container {
+            margin-top: 120px;
+            padding: 60px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+            background-color: #ffffff;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .new-container button {
+            margin: 15px 0;
+            padding: 20px 40px;
+            background-color: #808080;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.4em;
+            flex: 1 0 auto;
+            min-width: 200px;
+        }
+
+        .new-container button:hover {
+            background-color: #696969;
+        }
+
+        #chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            /* border-radius: 50%; */
+            background-color: #007bff;
+            color: white;
+            font-size: 1.2em;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            outline: none;
+            border-radius: 10px;
+        }
+
+        #chat-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        #chat-button:active {
+            background-color: #004080;
+            transform: scale(0.9);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 0.8em;
+        }
+    </style>
+    <script>
+        function openPowerCalculator() {
+            window.open("//127.0.0.1:5000/power", "_blank");
+        }
+        function openEnergyCalculator() {
+            window.open("//127.0.0.1:5000/energy", "_blank");
+        }
+        function openCostCalculator() {
+            window.open("//127.0.0.1:5000/cost", "_blank");
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>Naija Energy Hub</h1>
+        <button class="button">Signup/Login</button>
+    </div>
+    <div class="container-grid">
+        <div class="notes-container">
+            <h3>Notes</h3>
+            <p>Add your notes here.</p>
+            
+        </div>
+        <div class="main-container">
+            <p>Welcome to Naija Energy Hub! This will be the landing page for our amazing energy app.</p>
+            
+        </div>
+    </div>
+    <div class="hero-container">
+        <h2>Welcome to Our Platform</h2>
+        <p>Discover the future of energy solutions.</p>
+        
+    </div>
+    <div class="disclaimer">
+        <p>Disclaimer: This website is for informational purposes only.  The content should not be considered professional advice.</p>
+    </div>
+
+    <div class="button-section">
+        <button class="round-button" onclick="openPowerCalculator()">Calculate Power</button>
+        <button class="round-button" onclick="openEnergyCalculator()">Calculate Energy</button>
+        <button class="round-button" onclick="openCostCalculator()">Calculate Cost of Energy</button>
+    </div>
+
+    <div class="new-container">
+        
+        <button>Energy Savings</button>
+        <button>Estimate Electricity Bill</button>
+        <button>Purchase Electricty Tokens</button>
+        <button>Solar Recommendation</button>
+        <button>Generator Recommendation</button>
+        <button>Purchase Electricity Gadgets</button>
+    </div>
+
+    <button id="chat-button">Quick Chat</button>
+
+    <footer>
+        <p>&copy; 2025 Naija Energy Hub. All rights reserved.</p>
+    </footer>
+</body>
+</html>
