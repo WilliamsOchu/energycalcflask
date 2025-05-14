@@ -1,83 +1,732 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Electrical Power Calculator</title>
+    <title>Power Calculator</title>
     <style>
-        .device-entry {
-            margin-bottom: 10px;
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 4000px;
+            margin: 20px auto;
+            position: relative;
+        }
+        .top-right-button-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .go-professional-button {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .info-label {
+            display: block;
+            margin-top: 20px;
+            font-style: italic;
+            color: #777;
+            text-align: center;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 130px;
+        }
+        .category-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 50px;
+        }
+        .category-button:hover {
+            background-color: #367c39;
+        }
+
+        #device-form, #enterprise-device-form, #industrial-device-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        #device-table, #enterprise-device-table, #industrial-device-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #device-table th, #device-table td, #enterprise-device-table th, #enterprise-device-table td, #industrial-device-table th, #industrial-device-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #device-table th, #enterprise-device-table th, #industrial-device-table th {
+            background-color: #f0f0f0;
+        }
+
+        #device-table input[type="text"],
+        #device-table input[type="number"],
+        #enterprise-device-table input[type="text"],
+        #enterprise-device-table input[type="number"],
+        #industrial-device-table input[type="text"],
+        #industrial-device-table input[type="number"] {
+            width: calc(100% - 16px);
             padding: 8px;
             border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+       .remove-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .remove-button:hover {
+            background-color: #d32f2f;
+        }
+        #add-device-button, #add-enterprise-device-button, #add-industrial-device-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        #add-device-button:hover, #add-enterprise-device-button:hover, #add-industrial-device-button:hover{
+            background-color: #367c39;
+        }
+        #calculation-result {
+            margin-top: 200px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+            display: block;
+        }
+        #calculate-total-power {
+            display: inline-block;
+            margin-top: -100px;
+            margin-left: 10px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #calculate-total-power:hover {
+            background-color: #218838;
+        }
+
+        #reset-form {
+            display: inline-block;
+            margin-top: -100px;
+            margin-left: 20px;
+            padding: 10px 20px;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #reset-form:hover {
+            background-color: #c9302c;
+        }
+        .button-container-bottom {
+            text-align: right;
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        #result-interpretation {
+            margin-top: 100px;
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+            font-style: italic;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            width: fit-content;
+            display: none;
+        }
+        .advert-container {
+            text-align: left;
+            margin-top: -30px; /* Adjusted margin-top */
+        }
+        .export-button {
+            background-color: #17a2b8;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 80px;
+            margin-right: 10px;
+            margin-left: 0;
+            display: inline-block;
+            text-align: left;
+        }
+
+        .export-button:hover {
+            background-color: #138496;
+        }
+        #export-buttons-container {
+            display: flex;
+            align-items: flex-start;
+        }
+        .partnerships-section {
+            border: 1px solid #000;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 100px;
+            text-align: center;
+        }
+
+        /* New button styles */
+        .new-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 100px;
+        
+        }
+        .new-button {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+        }
+        .new-button:hover {
+            background-color: #5a6268;
         }
     </style>
 </head>
 <body>
-    <h1>Electrical Power Calculator</h1>
-
-    <form method="POST">
-        <div>
-            <h2>Select from Available Devices and Enter Power</h2>
-            {% for name in available_devices %}
-                <div>
-                    <label for="power_{{ name }}">{{ name }}:</label>
-                    <input type="text" id="power_{{ name }}" name="power_{{ name }}" placeholder="Enter power (Watts)">
-                </div>
-            {% endfor %}
+    <div class="container">
+        <div class="top-right-button-container">
+            <button class="go-professional-button">Go Professional</button>
         </div>
-        <br>
+        <h1>Power Calculator</h1>
+    </div>
+    <label class="info-label">
+        "The watt is the standard unit of power in the International System of Units (SI)." - <cite>General Conference on Weights and Measures</cite><br><br>
+        "Electric power is the rate at which electrical energy is transferred by an electric circuit. The SI unit of power is the watt, one joule per second." - <cite>Various Physics Textbooks</cite>
+    </label>
+    <div class="button-container">
+        <button class="category-button" id="domestic-button">Domestic</button>
+        <button class="category-button" id="enterprise-button">Enterprise</button>
+        <button class="category-button" id="industrial-button">Industrial</button>
+    </div>
 
-        <div>
-            <h2>Manually Enter Devices</h2>
-            <div id="manual-devices-container">
-                <div class="device-entry">
-                    <label for="manual_device_name_0">Device Name:</label>
-                    <input type="text" id="manual_device_name_0" name="manual_device_name" placeholder="Enter device name">
-                    <label for="manual_device_power_0">Power (Watts):</label>
-                    <input type="text" id="manual_device_power_0" name="manual_device_power" placeholder="Enter power">
-                </div>
-            </div>
-            <button type="button" onclick="addManualDevice()">Add Another Device</button>
-        </div>
-        <br>
-
-        <input type="submit" value="Calculate Total Power">
+    <form id="device-form">
+        <h2>Domestic Electrical Devices</h2>
+        <table id="device-table">
+            <tr>
+                <th>Device Name</th>
+                <th>Power Rating (Watts)</th>
+                <th>Number of Devices</th>
+                <th>Remove</th>
+            </tr>
+        </table>
+        <button type="button" id="add-device-button">Add Device</button>
     </form>
 
-    {% if error %}
-        <p style="color:red;">Error: {{ error }}</p>
-    {% endif %}
+    <form id="enterprise-device-form">
+        <h2>Enterprise Electrical Devices</h2>
+        <table id="enterprise-device-table">
+            <tr>
+                <th>Device Name</th>
+                <th>Power Rating (Watts)</th>
+                <th>Number of Devices</th>
+                <th>Remove</th>
+            </tr>
+        </table>
+        <button type="button" id="add-enterprise-device-button">Add Device</button>
+    </form>
 
-    {% if device_entries %}
-        <h2>Devices Entered:</h2>
-        <ul>
-            {% for device in device_entries %}
-                <li>{{ device.name }}: {{ device.power }} Watts</li>
-            {% endfor %}
-        </ul>
-        <h3>Total Power Consumption: {{ total_power }} Watts</h3>
-        <p><a href="/energy">Calculate Energy Consumption</a></p>
-    {% elif request.method == 'POST' and not error %}
-        <p>No devices were entered.</p>
-        <p><a href="/energy">Calculate Energy Consumption</a></p>
-    {% else %}
-        <p><a href="/energy">Calculate Energy Consumption</a></p>
-    {% endif %}
+    <form id="industrial-device-form">
+        <h2>Industrial Electrical Devices</h2>
+        <table id="industrial-device-table">
+            <tr>
+                <th>Device Name</th>
+                <th>Power Rating (Watts)</th>
+                <th>Number of Devices</th>
+                <th>Remove</th>
+            </tr>
+        </table>
+        <button type="button" id="add-industrial-device-button">Add Device</button>
+    </form>
+
+    <div id="calculation-section">
+        <label id="calculation-result">Total Power: </label>
+    </div>
+    <div class="button-container-bottom">
+        <button id="calculate-total-power">Calculate Total Power</button>
+        <button id="reset-form">Reset Form</button>
+    </div>
+    <div class="advert-container">
+        <p>Result Interpretation</p>
+    </div>
+    <div id="export-buttons-container">
+        <button class="export-button" id="generate-pdf">Generate PDF</button>
+        <button class="export-button" id="generate-csv">Generate CSV</button>
+        <button class="export-button" id="share-button">Share</button>
+    </div>
+
+    <div class="partnerships-section">
+        <h2>Paid Partnerships</h2>
+        <p>This section outlines our paid partnerships.</p>
+    </div>
+
+    <div class="new-button-container">
+        <button class="new-button" id="button1">Estimate Energy Consumption</button>
+        <button class="new-button" id="button2">Estimate Cost of Energy</button>
+        <button class="new-button" id="button3">Energy Savings</button>
+    </div>
 
     <script>
-        let manualDeviceCount = 1;
+        const domesticButton = document.getElementById("domestic-button");
+        const enterpriseButton = document.getElementById("enterprise-button");
+        const industrialButton = document.getElementById("industrial-button");
+        const deviceForm = document.getElementById("device-form");
+        const enterpriseDeviceForm = document.getElementById("enterprise-device-form");
+        const industrialDeviceForm = document.getElementById("industrial-device-form");
+        const deviceTable = document.getElementById("device-table");
+        const enterpriseDeviceTable = document.getElementById("enterprise-device-table");
+        const industrialDeviceTable = document.getElementById("industrial-device-table");
+        const addDeviceButton = document.getElementById("add-device-button");
+        const addEnterpriseDeviceButton = document.getElementById("add-enterprise-device-button");
+        const addIndustrialDeviceButton = document.getElementById("add-industrial-device-button");
+        const calculationResultLabel = document.getElementById("calculation-result");
+        const resetButton = document.getElementById("reset-form");
+        const calculateTotalPowerButton = document.getElementById("calculate-total-power");
+        const resultInterpretationLabel = document.getElementById("result-interpretation");
+        const calculationSection = document.getElementById("calculation-section")
+        const generatePdfButton = document.getElementById("generate-pdf");
+        const generateCsvButton = document.getElementById("generate-csv");
+        const shareButton = document.getElementById("share-button");
 
-        function addManualDevice() {
-            const container = document.getElementById('manual-devices-container');
-            const newDiv = document.createElement('div');
-            newDiv.classList.add('device-entry');
-            newDiv.innerHTML = `
-                <label for="manual_device_name_${manualDeviceCount}">Device Name:</label>
-                <input type="text" id="manual_device_name_${manualDeviceCount}" name="manual_device_name" placeholder="Enter device name">
-                <label for="manual_device_power_${manualDeviceCount}">Power (Watts):</label>
-                <input type="text" id="manual_device_power_${manualDeviceCount}" name="manual_device_power" placeholder="Enter power">
+        // Get the new buttons
+        const button1 = document.getElementById("button1");
+        const button2 = document.getElementById("button2");
+        const button3 = document.getElementById("button3");
+
+
+        const domesticDevices = [
+            "Television",
+            "Refrigerator",
+            "Oven",
+            "Microwave",
+            "Washing Machine",
+            "Dryer",
+            "Dishwasher",
+            "Computer",
+            "Laptop",
+            "Smartphone Charger",
+            "Light Bulb (LED)",
+            "Vacuum Cleaner",
+            "Air Conditioner",
+            "Heater",
+            "Electric Kettle",
+            "Toaster",
+            "Coffee Maker",
+            "Hair Dryer",
+            "Electric Iron",
+            "Fan",
+            "Refrigerator",
+            "Deep Freezer",
+            "Bulbs",
+            "Microwave Oven",
+            "Washing Machine",
+            "Sound System",
+            "Air Conditioner",
+            "Water Heater",
+            "Electric Iron",
+            "Ceiling Fan(AC)",
+            "Standing Fan(DC)",
+            "TV Decoder",
+            "Water Dispenser",
+            "Phone Charger",
+            "Laptop Charger",
+            "Electric Kettle",
+            "Sound System",
+            "Blender",
+            "Internet Router",
+            "Gaming Console"
+        ];
+
+        const enterpriseDevices = [
+            "Server",
+            "Router",
+            "Switch",
+            "Firewall",
+            "UPS",
+            "PABX System",
+            "Printer",
+            "Photocopier",
+            "Scanner",
+            "Projector",
+            "Interactive Whiteboard",
+            "Video Conferencing System",
+            "Desktop Computer",
+            "Laptop Computer",
+            "IP Phone",
+            "Storage Array",
+            "Load Balancer",
+            "Generator",
+            "Transformer",
+            "Chiller"
+        ];
+
+        const industrialDevices = [
+            "Induction Motor",
+            "Synchronous Motor",
+            "Transformer",
+            "Circuit Breaker",
+            "Generator",
+            "Power Inverter",
+            "Rectifier",
+            "Variable Frequency Drive (VFD)",
+            "Programmable Logic Controller (PLC)",
+            "Industrial Robot",
+            "Welding Machine",
+            "CNC Machine",
+            "Conveyor Belt",
+            "Pump",
+            "Compressor",
+            "Hydraulic Press",
+            "Furnace",
+            "Boiler",
+            "Cooling Tower",
+            "Industrial Lighting"
+        ];
+
+        function displayDomesticDevices() {
+            deviceTable.innerHTML = `
+                <tr>
+                    <th>Device Name</th>
+                    <th>Power Rating (Watts)</th>
+                    <th>Number of Devices</th>
+                    <th>Remove</th>
+                </tr>
             `;
-            container.appendChild(newDiv);
-            manualDeviceCount++;
+            domesticDevices.forEach(device => {
+                const row = deviceTable.insertRow();
+                const deviceNameCell = row.insertCell();
+                const powerRatingCell = row.insertCell();
+                const numberOfDevicesCell = row.insertCell();
+                const removeButtonCell = row.insertCell();
+
+                deviceNameCell.textContent = device;
+                powerRatingCell.innerHTML = `<input type="number" name="power-rating" required>`;
+                numberOfDevicesCell.innerHTML = `<input type="number" name="device-amount" required>`;
+                removeButtonCell.innerHTML = `<button type="button" class="remove-button">Remove</button>`;
+            });
+            calculationResultLabel.textContent = 'Total Power: ';
+            resultInterpretationLabel.textContent = 'Power is: ';
         }
+
+        function displayEnterpriseDevices() {
+            enterpriseDeviceTable.innerHTML = `
+                <tr>
+                    <th>Device Name</th>
+                    <th>Power Rating (Watts)</th>
+                    <th>Number of Devices</th>
+                    <th>Remove</th>
+                </tr>
+            `;
+            enterpriseDevices.forEach(device => {
+                const row = enterpriseDeviceTable.insertRow();
+                const deviceNameCell = row.insertCell();
+                const powerRatingCell = row.insertCell();
+                const numberOfDevicesCell = row.insertCell();
+                const removeButtonCell = row.insertCell();
+
+                deviceNameCell.textContent = device;
+                powerRatingCell.innerHTML = `<input type="number" name="enterprise-power-rating" required>`;
+                numberOfDevicesCell.innerHTML = `<input type="number" name="enterprise-device-amount" required>`;
+                removeButtonCell.innerHTML = `<button type="button" class="remove-button">Remove</button>`;
+            });
+            calculationResultLabel.textContent = 'Total Power: ';
+            resultInterpretationLabel.textContent = 'Power is: ';
+        }
+
+        function displayIndustrialDevices() {
+            industrialDeviceTable.innerHTML = `
+                <tr>
+                    <th>Device Name</th>
+                    <th>Power Rating (Watts)</th>
+                    <th>Number of Devices</th>
+                    <th>Remove</th>
+                </tr>
+            `;
+            industrialDevices.forEach(device => {
+                const row = industrialDeviceTable.insertRow();
+                const deviceNameCell = row.insertCell();
+                const powerRatingCell = row.insertCell();
+                const numberOfDevicesCell = row.insertCell();
+                const removeButtonCell = row.insertCell();
+
+                deviceNameCell.textContent = device;
+                powerRatingCell.innerHTML = `<input type="number" name="industrial-power-rating" required>`;
+                numberOfDevicesCell.innerHTML = `<input type="number" name="industrial-device-amount" required>`;
+                removeButtonCell.innerHTML = `<button type="button" class="remove-button">Remove</button>`;
+            });
+            calculationResultLabel.textContent = 'Total Power: ';
+            resultInterpretationLabel.textContent = 'Power is: ';
+        }
+
+        function calculatePower(table) {
+            let totalPower = 0;
+            const rows = table.querySelectorAll('tr:not(:first-child)');
+            rows.forEach(row => {
+                const powerInput = row.querySelector('input[name*="power-rating"]');
+                const amountInput = row.querySelector('input[name*="device-amount"]');
+                if (powerInput && amountInput) {
+                    const power = Number(powerInput.value);
+                    const amount = Number(amountInput.value);
+                    if (!isNaN(power) && !isNaN(amount)) {
+                        totalPower += power * amount;
+                    }
+                }
+            });
+            return totalPower;
+        }
+
+        domesticButton.addEventListener("click", () => {
+            deviceForm.style.display = "block";
+            enterpriseDeviceForm.style.display = "none";
+            industrialDeviceForm.style.display = "none";
+            displayDomesticDevices();
+        });
+
+        enterpriseButton.addEventListener("click", () => {
+            enterpriseDeviceForm.style.display = "block";
+            deviceForm.style.display = "none";
+            industrialDeviceForm.style.display = "none";
+            displayEnterpriseDevices();
+        });
+
+        industrialButton.addEventListener("click", () => {
+            industrialDeviceForm.style.display = "block";
+            deviceForm.style.display = "none";
+            enterpriseDeviceForm.style.display = "none";
+            displayIndustrialDevices();
+        });
+
+        deviceTable.addEventListener('click', (event) => {
+            if (event.target.classList.contains('remove-button')) {
+                event.target.closest('tr').remove();
+                const totalPower = calculatePower(deviceTable);
+                calculationResultLabel.textContent = `Total Power: ${totalPower} Watts`;
+                resultInterpretationLabel.textContent = 'Power is: ';
+            }
+        });
+
+        enterpriseDeviceTable.addEventListener('click', (event) => {
+            if (event.target.classList.contains('remove-button')) {
+                event.target.closest('tr').remove();
+                const totalPower = calculatePower(enterpriseDeviceTable);
+                calculationResultLabel.textContent = `Total Power: ${totalPower} Watts`;
+                resultInterpretationLabel.textContent = 'Power is: ';
+            }
+        });
+
+        industrialDeviceTable.addEventListener('click', (event) => {
+            if (event.target.classList.contains('remove-button')) {
+                event.target.closest('tr').remove();
+                const totalPower = calculatePower(industrialDeviceTable);
+                calculationResultLabel.textContent = `Total Power: ${totalPower} Watts`;
+                resultInterpretationLabel.textContent = 'Power is: ';
+            }
+        });
+
+        addDeviceButton.addEventListener('click', () => {
+            const deviceNameInput = document.getElementById('device-name');
+            const newDeviceName = deviceNameInput.value;
+
+            if (newDeviceName.trim() !== "") {
+                domesticDevices.push(newDeviceName);
+                displayDomesticDevices();
+                deviceNameInput.value = '';
+            } else {
+                alert('Please enter a valid device name.');
+            }
+            const totalPower = calculatePower(deviceTable);
+            calculationResultLabel.textContent = `Total Power: ${totalPower} Watts`;
+            resultInterpretationLabel.textContent = 'Power is: ';
+        });
+
+        addEnterpriseDeviceButton.addEventListener('click', () => {
+            const deviceNameInput = document.getElementById('enterprise-device-name'); // Corrected ID.  The original code was missing this definition.
+            const newDeviceName = deviceNameInput.value;
+
+            if (newDeviceName.trim() !== "") {
+                const row = enterpriseDeviceTable.insertRow();
+                const deviceNameCell = row.insertCell();
+                const powerRatingCell = row.insertCell();
+                const numberOfDevicesCell = row.insertCell();
+                const removeButtonCell = row.insertCell();
+
+                deviceNameCell.textContent = newDeviceName;
+                powerRatingCell.innerHTML = `<input type="number" name="enterprise-power-rating" required>`;
+                numberOfDevicesCell.innerHTML = `<input type="number" name="enterprise-device-amount" required>`;
+                removeButtonCell.innerHTML = `<button type="button" class="remove-button">Remove</button>`;
+
+                deviceNameInput.value = '';
+            } else {
+                alert('Please enter a valid device name.');
+            }
+            const totalPower = calculatePower(enterpriseDeviceTable);
+            calculationResultLabel.textContent = `Total Power: ${totalPower} Watts`;
+            resultInterpretationLabel.textContent = 'Power is: ';
+        });
+
+        addIndustrialDeviceButton.addEventListener('click', () => {
+            const deviceNameInput = document.getElementById('industrial-device-name');    // Corrected ID. The original code was missing this definition.
+            const newDeviceName = deviceNameInput.value;
+
+            if (newDeviceName.trim() !== "") {
+                const row = industrialDeviceTable.insertRow();
+                const deviceNameCell = row.insertCell();
+                const powerRatingCell = row.insertCell();
+                const numberOfDevicesCell = row.insertCell();
+                const removeButtonCell = row.insertCell();
+
+                deviceNameCell.textContent = newDeviceName;
+                powerRatingCell.innerHTML = `<input type="number" name="industrial-power-rating" required>`;
+                numberOfDevicesCell.innerHTML = `<input type="number" name="industrial-device-amount" required>`;
+                removeButtonCell.innerHTML = `<button type="button" class="remove-button">Remove</button>`;
+
+                deviceNameInput.value = '';
+            } else {
+                alert('Please enter a valid device name.');
+            }
+            const totalPower = calculatePower(industrialDeviceTable);
+            calculationResultLabel.textContent = `Total Power: ${totalPower} Watts`;
+            resultInterpretationLabel.textContent = 'Power is: ';
+        });
+
+        calculateTotalPowerButton.addEventListener('click', () => {
+            let totalPower = 0;
+            if (deviceForm.style.display === "block") {
+                totalPower = calculatePower(deviceTable);
+            } else if (enterpriseDeviceForm.style.display === "block") {
+                totalPower = calculatePower(enterpriseDeviceTable);
+            } else if (industrialDeviceForm.style.display === "block") {
+                totalPower = calculatePower(industrialDeviceTable);
+            }
+            calculationResultLabel.textContent = `Total Power: ${totalPower} Watts`;
+        });
+
+        resetButton.addEventListener('click', () => {
+            deviceForm.reset();
+            enterpriseDeviceForm.reset();
+            industrialDeviceForm.reset();
+            calculationResultLabel.textContent = 'Total Power: ';
+
+            const powerInputs = document.querySelectorAll('input[name*="power-rating"]');
+            const amountInputs = document.querySelectorAll('input[name*="device-amount"]');
+
+            powerInputs.forEach(input => {
+                input.value = '';
+            });
+
+            amountInputs.forEach(input => {
+                input.value = '';
+            });
+
+            deviceForm.style.display= "none";
+enterpriseDeviceForm.style.display = "none";
+            industrialDeviceForm.style.display = "none";
+
+            deviceTable.innerHTML = `
+                <tr>
+                    <th>Device Name</th>
+                    <th>Power Rating (Watts)</th>
+                    <th>Number of Devices</th>
+                    <th>Remove</th>
+                </tr>
+            `;
+
+            enterpriseDeviceTable.innerHTML = `
+                <tr>
+                    <th>Device Name</th>
+                    <th>Power Rating (Watts)</th>
+                    <th>Number of Devices</th>
+                    <th>Remove</th>
+                </tr>
+            `;
+
+            industrialDeviceTable.innerHTML = `
+                <tr>
+                    <th>Device Name</th>
+                    <th>Power Rating (Watts)</th>
+                    <th>Number of Devices</th>
+                    <th>Remove</th>
+                </tr>
+            `;
+        });
+
+        // Add event listeners for the new buttons.  For now, they
+        // just log a message to the console.  You can replace this
+        // with your desired functionality.
+        button1.addEventListener("click", () => {
+            console.log("Button 1 clicked!");
+            // Add your code here for what should happen when Button 1 is clicked.
+        });
+
+        button2.addEventListener("click", () => {
+            console.log("Button 2 clicked!");
+            // Add your code here for what should happen when Button 2 is clicked.
+        });
+
+        button3.addEventListener("click", () => {
+            console.log("Button 3 clicked!");
+            // Add your code here for what should happen when Button 3 is clicked.
+        });
+
     </script>
 </body>
 </html>
