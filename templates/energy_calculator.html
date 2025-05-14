@@ -1,104 +1,684 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Electrical Energy Calculator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Calculator</title>
     <style>
-        .device-entry {
-            margin-bottom: 10px;
-            padding: 8px;
-            border: 1px solid #ccc;
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 4000px;
+            margin: 20px auto;
+            position: relative;
         }
+        .heading-section {
+            text-align: center;
+            padding: 20px;
+            background-color: #fffa;
+            margin-bottom: 20px;
+        }
+        #pro-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: blue;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #energy-explanation {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            font-size: 1em;
+            line-height: 1.5;
+            color: #555;
+        }
+        .disclaimer {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-left: 4px solid #ff6600;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            margin-top: 100px;
+        }
+        .button-group button {
+            margin: 0 50px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6495ED;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .button-group button:hover {
+            opacity: 0.8;
+        }
+        #energy-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+        #energy-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        #energy-form button {
+            width: auto;
+            margin: 30px 30px;
+        }
+        #energy-form .calc-button{
+            background-color: #808080;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #energy-form .calc-button:hover {
+            background-color: #555;
+        }
+
+        /* Styles for the Average Energy Consumption Form */
+        #average-energy-form, #enterprise-energy-form, #industrial-energy-form {
+            display: none;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+        }
+        #average-energy-form label, #enterprise-energy-form label, #industrial-energy-form label{
+            margin-top: 10px;
+            display: block;
+            font-weight: bold;
+        }
+        #average-energy-form input, #enterprise-energy-form input, #industrial-energy-form input {
+            width: 100%;
+            padding: 8px 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #average-energy-form button, #enterprise-energy-form button, #industrial-energy-form button{
+            background-color: #6495ED;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+            display: flex; /* Enable flexbox for button alignment */
+            margin-left: auto;
+            justify-content: flex-end; /* Align buttons to the right */
+            align-items: center; /* Vertically center items if needed */
+        }
+        #average-energy-form button:hover, #enterprise-energy-form button:hover, #industrial-energy-form button:hover {
+            background-color: #45a049;
+        }
+        #average-energy-result, #enterprise-energy-result, #industrial-energy-result {
+            margin-top: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #333;
+        }
+        #power-estimation-link {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #007bff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        #power-estimation-link:hover {
+            color: #0056b3;
+        }
+
+        /* Styles for Specific Energy Form */
+        #specific-energy-form {
+            display: none;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+        }
+        #specific-energy-form label {
+            margin-top: 10px;
+            display: block;
+            font-weight: bold;
+        }
+        #specific-energy-form input {
+            width: 100%;
+            padding: 8px 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #specific-energy-form button {
+            background-color: #6495ED;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+            
+        }
+        #specific-energy-form button:hover {
+            background-color: #45a049;
+        }
+        #specific-energy-result, #specific-energy-interpretation {
+            margin-top: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .device-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .device-row label {
+            margin-right: 10px;
+        }
+        .device-row input {
+            margin-right: 10px;
+            width: 150px;
+        }
+        .device-row button {
+            background-color: #6495ED;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .device-row button:hover {
+            background-color: #d32f2f;
+        }
+        #add-device-button {
+            background-color: #6495ED;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+        #add-device-button:hover {
+            background-color: #1976D2;
+        }
+        #reset-average-form {
+            margin-left: auto; /* Push the button to the right */
+            display: none;
+        }
+        #reset-specific-form {
+            margin-left: auto;
+            display: none;
+        }
+        .export-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .export-buttons button {
+            background-color: #4CAF50;
+            margin: 0 50px;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .export-buttons button:hover {
+            background-color: #367c39;
+        }
+        .advert-section {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            color: #495057;
+            font-size: 0.9em;
+        }
+
+        .advert-section label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+                .bottom-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .bottom-buttons button {
+            margin: 0 20px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6495ED; /* Blue color */
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .bottom-buttons button:hover {
+            opacity: 0.8;
+        }
+
     </style>
 </head>
 <body>
-    <h1>Electrical Energy Calculator</h1>
-
-    <form method="POST">
-        <div>
-            <h2>Calculate Energy Consumption</h2>
-            <p>Choose how you want to calculate energy:</p>
-            <div>
-                <input type="radio" id="individual_energy" name="energy_mode" value="individual" checked>
-                <label for="individual_energy">Enter individual device power and time</label>
-            </div>
-            <div>
-                <input type="radio" id="total_energy" name="energy_mode" value="total">
-                <label for="total_energy">Enter total power and total time</label>
-            </div>
+    <button id="pro-button">Go Pro</button>
+    <section class="heading-section">
+        <h1>Energy Calculator</h1>
+    </section>
+        <div class="container">
         </div>
-        <br>
+    <div id="energy-explanation">
+        <p>
+            <b>Law of Conservation of Energy:</b> The total energy of an isolated system remains constant — it is said to be conserved over time.  Energy can neither be created nor destroyed; rather, it transforms from one form to another.
+        </p>
+        <p>
+            <b>Units of Energy:</b> The standard unit of energy is the joule (J), which is also the standard unit of work. Other units include the calorie (cal), kilocalorie (kcal), and kilowatt-hour (kWh).
+        </p>
+        <p>
+            <b>Calculating Energy Consumed by Electrical Appliances:</b> The energy consumed by an electrical appliance is typically calculated using the formula:
+        </p>
+        <p>
+            Energy (in kWh) = Power (in kW) × Time (in hours)
+        </p>
+        <p>
+           For example, if a 1000-watt (1 kW) appliance is used for 2 hours, the energy consumed is 1 kW × 2 hours = 2 kWh.
+        </p>
+    </div>
+    <div class="disclaimer">
+        <p>
+            <b>Disclaimer:</b> The calculations provided by this Energy Calculator are for informational purposes only.  They are based on simplified models and may not reflect the precise energy consumption in real-world scenarios. Factors such as appliance efficiency, usage patterns, and environmental conditions can significantly affect actual energy usage.  For accurate energy consumption measurements, consult specialized metering devices and professional advice.
+        </p>
+    </div>
+    <div class="button-group">
+        <button data-category="domestic">Domestic</button>
+        <button data-category="enterprise">Enterprise</button>
+        <button data-category="industrial">Industrial</button>
+    </div>
 
-        <div id="individual-input" class="energy-input-section">
-            <h3>Enter Individual Device Power and Usage Time</h3>
-            <div id="energy-devices-container">
-                <div class="device-entry">
-                    <label for="device_name_0">Device Name:</label>
-                    <input type="text" id="device_name_0" name="device_name" placeholder="Enter device name">
-                    <label for="device_power_0">Power (Watts):</label>
-                    <input type="text" id="device_power_0" name="device_power" placeholder="Enter power">
-                    <label for="device_time_0">Usage Time (Hours):</label>
-                    <input type="text" id="device_time_0" name="device_time" placeholder="Enter usage time">
-                </div>
-            </div>
-            <button type="button" onclick="addEnergyDevice()">Add Another Device</button>
-        </div>
-
-        <div id="total-input" class="energy-input-section" style="display:none;">
-            <h3>Enter Total Power and Total Time</h3>
-            <label for="total_power">Total Power (Watts):</label>
-            <input type="text" id="total_power" name="total_power" placeholder="Enter total power"><br><br>
-            <label for="total_time">Total Time (Hours):</label>
-            <input type="text" id="total_time" name="total_time" placeholder="Enter total time"><br>
-        </div>
-        <br>
-
-        <input type="submit" value="Calculate Total Energy">
+    <form id="energy-form">
+        <button type="button" class="calc-button" value="average">Calculate Average Energy Consumption</button>
+        <button type="button" class="calc-button" value="specific">Calculate Near Specific Energy Consumption</button>
     </form>
 
-    {% if error %}
-        <p style="color:red;">Error: {{ error }}</p>
-    {% endif %}
+    <form id="average-energy-form">
+        <label>You are calculating average energy consumption over a specific time duration</label>
+        <label for="totalPower">Total Power Consumption (kW):</label>
+        <input type="number" id="totalPower" name="totalPower" required>
+        <label for="totalTime">Total Time Duration (hours):</label>
+        <input type="number" id="totalTime" name="totalTime" required>
+        <button type="submit" id="avgpower">Calculate Average Energy</button>
+        <button type="button" id="reset-average-form" style="display: none;">Reset Form</button>
+        <label id="average-energy-result">Average Energy Consumed:</label>
+        <label id="average-energy-interpretation">Result Interpretation:</label>
+        <p id="power-estimation-link">
+            If you don't know the Total Power Consumption, <a href="#">click here</a> to help you estimate your total power consumption.
+        </p>
+        
+         <div class="export-buttons">
+            <button type="button" id="generate-pdf">Generate PDF</button>
+            <button type="button" id="generate-csv">Generate CSV</button>
+            <button type="button" id="share-data">Share</button>
+        </div>
+    </form>
 
-    {% if total_energy > 0 %}
-        <h3>Total Energy Consumption: {{ "%.2f"|format(total_energy) }} Watt-hours</h3>
-    {% elif request.method == 'POST' and not error %}
-        <p>No devices or total power/time entered for energy calculation.</p>
-    {% endif %}
+    <form id="enterprise-energy-form">
+        <label>You are calculating energy consumption for an enterprise</label>
+        <label for="enterprisePower">Total Power Consumption (kW):</label>
+        <input type="number" id="enterprisePower" name="enterprisePower" required>
+        <label for="enterpriseTime">Total Time Duration (hours):</label>
+        <input type="number" id="enterpriseTime" name="enterpriseTime" required>
+        <button type="submit" id="enterprisePowerBtn">Calculate Enterprise Energy</button>
+        <label id="enterprise-energy-result"></label>
+        <label id="enterprise-energy-interpretation"></label>
+    </form>
 
-    <p><a href="/">Calculate Power Consumption</a></p>
+    <form id="industrial-energy-form">
+        <label>You are calculating energy consumption for industrial purposes</label>
+        <label for="industrialPower">Total Power Consumption (kW):</label>
+        <input type="number" id="industrialPower" name="industrialPower" required>
+        <label for="industrialTime">Total Time Duration (hours):</label>
+        <input type="number" id="industrialTime" name="industrialTime" required>
+        <button type="submit" id="industrialPowerBtn">Calculate Industrial Energy</button>
+        <label id="industrial-energy-result"></label>
+        <label id="industrial-energy-interpretation"></label>
+    </form>
+
+    <form id="specific-energy-form">
+        <label>You are calculating Near Specific Energy Consumption</label>
+        <div id="device-list">
+            <div class="device-row">
+                <label>Device:</label>
+                <select name="device">
+                    <option value="tv">Television</option>
+                    <option value="computer">Computer</option>
+                    <option value="refrigerator">Refrigerator</option>
+                    <option value="ac">Air Conditioner</option>
+                    <option value="washing_machine">Washing Machine</option>
+                </select>
+                <label>Power (kW):</label>
+                <input type="number" name="power" required>
+                <label>Time (hours):</label>
+                <input type="number" name="time" required>
+                <label>Quantity:</label>
+                <input type="number" name="quantity" required>
+                <button class="remove-device-button">Remove</button>
+            </div>
+        </div>
+        <button type="button" id="add-device-button">Add Device</button>
+        <button type="submit">Calculate Specific Energy</button>
+        <button type="button" id="reset-specific-form" style="display: none;">Reset Form</button>
+        <label id="specific-energy-result">Total Energy Consumed:</label>
+        <label id="specific-energy-interpretation">Result interpretation:</label>
+    </form>
+        <div class="advert-section">
+        <label>Advert from Partners</label>
+        <div>
+            <p>Looking for energy-efficient solutions? Check out our partner, <a href="#">EcoPower Solutions</a>!</p>
+            </div>
+    </div>
+        <div class="bottom-buttons">
+        <button id="estimate-cost-button">Estimate Cost of Energy</button>
+        <button id="purchase-electricity-button">Purchase Electricity</button>
+        <button id="energy-savings-button">Energy Savings</button>
+    </div>
 
     <script>
-        let energyDeviceCount = 1;
-        const individualInput = document.getElementById('individual-input');
-        const totalInput = document.getElementById('total-input');
-        const individualRadio = document.getElementById('individual_energy');
-        const totalRadio = document.getElementById('total_energy');
+    const buttons = document.querySelectorAll('.button-group button');
+    const energyForm = document.getElementById('energy-form');
+    const formButtons = energyForm.querySelectorAll('button');
+    const averageEnergyForm = document.getElementById('average-energy-form');
+    const averageEnergyResult = document.getElementById('average-energy-result');
+    const averageEnergyInterpretation = document.getElementById('average-energy-interpretation');
+    const powerEstimationLink = document.getElementById('power-estimation-link').querySelector('a');
 
-        function addEnergyDevice() {
-            const container = document.getElementById('energy-devices-container');
-            const newDiv = document.createElement('div');
-            newDiv.classList.add('device-entry');
-            newDiv.innerHTML = `
-                <label for="device_name_${energyDeviceCount}">Device Name:</label>
-                <input type="text" id="device_name_${energyDeviceCount}" name="device_name" placeholder="Enter device name">
-                <label for="device_power_${energyDeviceCount}">Power (Watts):</label>
-                <input type="text" id="device_power_${energyDeviceCount}" name="device_power" placeholder="Enter power">
-                <label for="device_time_${energyDeviceCount}">Usage Time (Hours):</label>
-                <input type="text" id="device_time_${energyDeviceCount}" name="device_time" placeholder="Enter usage time">
-            `;
-            container.appendChild(newDiv);
-            energyDeviceCount++;
+    const enterpriseEnergyForm = document.getElementById('enterprise-energy-form');
+    const enterpriseEnergyResult = document.getElementById('enterprise-energy-result');
+    const enterpriseEnergyInterpretation = document.getElementById('enterprise-energy-interpretation');
+
+    const industrialEnergyForm = document.getElementById('industrial-energy-form');
+    const industrialEnergyResult = document.getElementById('industrial-energy-result');
+    const industrialEnergyInterpretation = document.getElementById('industrial-energy-interpretation');
+
+    const specificEnergyForm = document.getElementById('specific-energy-form');
+    const deviceList = document.getElementById('device-list');
+    const addDeviceButton = document.getElementById('add-device-button');
+    const specificEnergyResult = document.getElementById('specific-energy-result');
+    const specificEnergyInterpretation = document.getElementById('specific-energy-interpretation');
+
+    function createExportButtons() {
+        const exportButtonsDiv = document.createElement('div');
+        exportButtonsDiv.className = 'export-buttons';
+
+        const pdfButton = document.createElement('button');
+        pdfButton.type = 'button';
+        pdfButton.id = 'generate-pdf-specific';
+        pdfButton.textContent = 'Generate PDF';
+        exportButtonsDiv.appendChild(pdfButton);
+
+        const csvButton = document.createElement('button');
+        csvButton.type = 'button';
+        csvButton.id = 'generate-csv-specific';
+        csvButton.textContent = 'Generate CSV';
+        exportButtonsDiv.appendChild(csvButton);
+
+        const shareButton = document.createElement('button');
+        shareButton.type = 'button';
+        shareButton.id = 'share-data-specific';
+        shareButton.textContent = 'Share';
+        exportButtonsDiv.appendChild(shareButton);
+
+        return exportButtonsDiv;
+    }
+
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            energyForm.style.display = 'flex';
+            averageEnergyForm.style.display = 'none';
+            enterpriseEnergyForm.style.display = 'none';
+            industrialEnergyForm.style.display = 'none';
+            specificEnergyForm.style.display = 'none';
+            // Remove export buttons if they exist when switching categories
+            const existingExportButtons = specificEnergyForm.querySelector('.export-buttons');
+            if (existingExportButtons) {
+                specificEnergyForm.removeChild(existingExportButtons);
+            }
+        });
+    });
+
+    formButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            const calculationType = event.target.value;
+            if (calculationType === 'average') {
+                averageEnergyForm.style.display = 'flex';
+                energyForm.style.display = 'none';
+                const resetButton = document.getElementById('reset-average-form');
+                if (resetButton) {
+                    resetButton.style.display = 'inline-block';
+                }
+                // Remove export buttons from specific form if visible
+                const specificExportButtons = specificEnergyForm.querySelector('.export-buttons');
+                if (specificExportButtons) {
+                    specificEnergyForm.removeChild(specificExportButtons);
+                }
+            } else if (calculationType === 'specific') {
+                specificEnergyForm.style.display = 'flex';
+                energyForm.style.display = 'none';
+                const resetButton = document.getElementById('reset-specific-form');
+                if (resetButton) {
+                    resetButton.style.display = 'inline-block';
+                }
+                // Add export buttons to the specific form
+                const exportButtonsDiv = createExportButtons();
+                specificEnergyForm.appendChild(exportButtonsDiv);
+            }
+        });
+    });
+
+    averageEnergyForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const totalPower = parseFloat(document.getElementById('totalPower').value);
+        const totalTime = parseFloat(document.getElementById('totalTime').value);
+
+        if (isNaN(totalPower) || totalPower <= 0) {
+            averageEnergyResult.textContent = "Please enter a valid positive number for Total Power Consumption.";
+            return;
+        }
+        if (isNaN(totalTime) || totalTime <= 0) {
+            averageEnergyResult.textContent = "Please enter a valid positive number for Total Time Duration.";
+            return;
         }
 
-        individualRadio.addEventListener('change', function() {
-            individualInput.style.display = 'block';
-            totalInput.style.display = 'none';
+        const averageEnergy = totalPower * totalTime;
+        averageEnergyResult.textContent = `Average Energy Consumption: ${averageEnergy.toFixed(2)} kWh`;
+        averageEnergyInterpretation.textContent = interpretEnergyConsumption(averageEnergy);
+    });
+
+    powerEstimationLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        alert('Redirecting to Power Consumption Estimation Tool...');
+    });
+
+    enterpriseEnergyForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const totalPower = parseFloat(document.getElementById('enterprisePower').value);
+        const totalTime = parseFloat(document.getElementById('enterpriseTime').value);
+
+        if (isNaN(totalPower) || totalPower <= 0) {
+            enterpriseEnergyResult.textContent = "Please enter a valid positive number for Total Power Consumption.";
+            return;
+        }
+        if (isNaN(totalTime) || totalTime <= 0) {
+            enterpriseEnergyResult.textContent = "Please enter a valid positive number for Total Time Duration.";
+            return;
+        }
+
+        const averageEnergy = totalPower * totalTime;
+        enterpriseEnergyResult.textContent = `Enterprise Energy Consumption: ${averageEnergy.toFixed(2)} kWh`;
+        enterpriseEnergyInterpretation.textContent = interpretEnergyConsumption(averageEnergy);
+    });
+
+    industrialEnergyForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const totalPower = parseFloat(document.getElementById('industrialPower').value);
+        const totalTime = parseFloat(document.getElementById('industrialTime').value);
+
+        if (isNaN(totalPower) || totalPower <= 0) {
+            industrialEnergyResult.textContent = "Please enter a valid positive number for Total Power Consumption.";
+            return;
+        }
+        if (isNaN(totalTime) || totalTime <= 0) {
+            industrialEnergyResult.textContent = "Please enter a valid positive number for Total Time Duration.";
+            return;
+        }
+
+        const averageEnergy = totalPower * totalTime;
+        industrialEnergyResult.textContent = `Industrial Energy Consumption: ${averageEnergy.toFixed(2)} kWh`;
+        industrialEnergyInterpretation.textContent = interpretEnergyConsumption(averageEnergy);
+    });
+
+    addDeviceButton.addEventListener('click', () => {
+        const newDeviceRow = document.createElement('div');
+        newDeviceRow.className = 'device-row';
+        newDeviceRow.innerHTML = `
+            <label>Device:</label>
+            <select name="device">
+                <option value="tv">Television</option>
+                <option value="computer">Computer</option>
+                <option value="refrigerator">Refrigerator</option>
+                <option value="ac">Air Conditioner</option>
+                <option value="washing_machine">Washing Machine</option>
+            </select>
+            <label>Power (kW):</label>
+            <input type="number" name="power" required>
+            <label>Time (hours):</label>
+            <input type="number" name="time" required>
+            <label>Quantity:</label>
+            <input type="number" name="quantity" required>
+            <button class="remove-device-button">Remove</button>
+        `;
+        deviceList.appendChild(newDeviceRow);
+
+        const removeButtons = document.querySelectorAll('.remove-device-button');
+        removeButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.target.parentNode.remove();
+            });
+        });
+    });
+
+    specificEnergyForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        let totalEnergy = 0;
+        const deviceRows = document.querySelectorAll('.device-row');
+
+        deviceRows.forEach(row => {
+            const power = parseFloat(row.querySelector('input[name="power"]').value);
+            const time = parseFloat(row.querySelector('input[name="time"]').value);
+            const quantity = parseFloat(row.querySelector('input[name="quantity"]').value);
+
+            if (isNaN(power) || power <= 0 || isNaN(time) || time <= 0 || isNaN(quantity) || quantity <= 0) {
+                specificEnergyResult.textContent = "Please enter valid positive numbers for power, time, and quantity.";
+                return;
+            }
+
+            totalEnergy += power * time * quantity;
         });
 
-        totalRadio.addEventListener('change', function() {
-            individualInput.style.display = 'none';
-            totalInput.style.display = 'block';
-        });
-    </script>
+        specificEnergyResult.textContent = `Total Specific Energy Consumption: ${totalEnergy.toFixed(2)} kWh`;
+        specificEnergyInterpretation.textContent = interpretEnergyConsumption(totalEnergy);
+    });
+
+    deviceList.addEventListener('click', (event) => {
+        if (event.target.classList.contains('remove-device-button')) {
+            event.target.parentNode.remove();
+        }
+    });
+
+    function interpretEnergyConsumption(energy) {
+        let interpretation = "";
+        if (energy < 10) {
+            interpretation = "This is a relatively low energy consumption.";
+        } else if (energy < 50) {
+            interpretation = "This is a moderate amount of energy consumption.";
+        } else if (energy < 100) {
+            interpretation = "This is a significant amount of energy consumption.";
+        } else {
+            interpretation = "This is a very high amount of energy consumption. Consider energy-saving measures.";
+        }
+        return interpretation;
+    }
+
+    document.getElementById('reset-average-form').addEventListener('click', (event) => {
+        event.preventDefault();
+        document.getElementById('average-energy-form').reset();
+        document.getElementById('average-energy-result').textContent = '';
+        document.getElementById('average-energy-interpretation').textContent = '';
+        document.getElementById('reset-average-form').style.display = 'none';
+    });
+
+    document.getElementById('reset-specific-form').addEventListener('click', (event) => {
+        event.preventDefault();
+        document.getElementById('specific-energy-form').reset();
+        document.getElementById('specific-energy-result').textContent = '';
+        document.getElementById('specific-energy-interpretation').textContent = '';
+        document.getElementById('reset-specific-form').style.display = 'none';
+        // Remove export buttons when resetting
+        const existingExportButtons = specificEnergyForm.querySelector('.export-buttons');
+        if (existingExportButtons) {
+            specificEnergyForm.removeChild(existingExportButtons);
+        }
+    });
+</script>
 </body>
 </html>
