@@ -1,111 +1,780 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Electrical Energy Cost Calculator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Bill Calculator</title>
     <style>
-        .device-entry {
+        h1 {
+            text-align: center;
+        }
+        .heading-container {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .pro-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: blue;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .tariff-bands {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f0fa;
+            border: 1px solid #b0c4de;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .tariff-bands h2 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .tariff-bands ul {
+            list-style-type: disc;
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .tariff-bands li {
             margin-bottom: 10px;
-            padding: 8px;
+        }
+
+        .tariff-bands p {
+            margin-bottom: 10px;
+        }
+
+        .tariff-bands strong {
+            color: #007bff;
+        }
+        .catbutton {
+            padding: 10px 15px;
+            border-radius: 5px;
+            background-color: #ADD8E6;
+            color: black;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .catbutton:hover {
+            background-color: #87CEFA;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 80px;
+            gap: 55px;
+        }
+        .energy-button {
+            padding: 20px 25px;
+            border-radius: 5px;
+            background-color: #808080;
+            color: white;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 40px;
+            margin-left: 25px;
+            margin: 50px;
+        }
+
+        .energy-button:hover {
+            background-color: #696969;
+        }
+
+        #form1 {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
             border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        #form1 label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        #form1 input,
+        #form1 select {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+
+        #unitCharge {
+            background-color: #e0e0e0;
+            color: #555;
+            border-color: #ddd;
+        }
+
+        #miniform {
+            display: none;
+            margin-top: 10px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            position: relative;
+        }
+
+        #miniform.show {
+            display: block;
+            max-height: 500px;
+            transition: max-height 0.3s ease-in;
+        }
+
+        #miniform label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        #miniform select {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        #miniform .close-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #555;
+        }
+
+        #miniform .close-button:hover {
+            color: #222;
+        }
+        #form1 button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        #form1 button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 20px;
+            background-color: #e0e0e0;
+            color: #555;
+            border-color: #ddd;
+        }
+        #buyEnergyBtn {
+            background-color: grey;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+            align-self: flex-start;
+        }
+
+        #buyEnergyBtn:hover {
+            background-color: #696969;
+        }
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* Styles for Form 2 (Energy Consumption Calculator) */
+        #form2 {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        #form2 .device-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: flex-end;
+        }
+
+        #form2 .device-row label {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        #form2 .device-row input,
+        #form2 .device-row select {
+            flex: 2;
+            width: auto;
+            margin-bottom: 0;
+        }
+
+        #form2 .device-row .remove-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        #form2 .device-row .remove-btn:hover {
+            background-color: #c82333;
+        }
+
+        #form2 .add-device-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        #form2 .add-device-btn:hover {
+            background-color: #0056b3;
+        }
+
+        #form2 .total-energy-display {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .greyed-out-field {
+            background-color: #e0e0e0;
+            color: #555;
+            border-color: #ddd;
+        }
+        #buyElecBtn {
+            background-color: grey;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+        }
+        #buyElecBtn:hover {
+            background-color: #696969;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        .action-buttons button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            background-color: #6c757d; /* A neutral grey */
+            color: white;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            flex: 1; /* Distribute space evenly */
+        }
+        .action-buttons button:hover {
+            background-color: #5a6268;
+        }
+        .advert-container {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #f0f8ff; /* Light blue background for advert */
+            border: 1px solid #add8e6;
+            border-radius: 8px;
+            text-align: center;
+            font-style: italic;
+            color: #333;
+        }
+        #bottomRightButtons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #bottomRightButtons button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            background-color: #4CAF50; /* Green for action buttons */
+            color: white;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        #bottomRightButtons button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
-    <h1>Electrical Energy Cost Calculator</h1>
-
-    <form method="POST" action="/cost">
-        <div>
-            <h2>Calculate Energy Cost</h2>
-            <p>Choose how you provided the energy information:</p>
-            <div>
-                <input type="radio" id="individual_energy" name="energy_mode" value="individual" checked>
-                <label for="individual_energy">Entered individual device power and time</label>
-            </div>
-            <div>
-                <input type="radio" id="total_energy" name="energy_mode" value="total">
-                <label for="total_energy">Entered total power and total time</label>
-            </div>
+    <div class="container">
+        <div class="heading-container">
+            <h1>Energy Bill Calculator</h1>
+            <a href="#" class="pro-button">Go Pro</a>
         </div>
-        <br>
+        <div class="tariff-bands">
+            <h2>Electricity Tariff Bands in Nigeria</h2>
+            <p>
+                Electricity tariffs in Nigeria are structured into different bands, primarily based on the hours of electricity supply received by customers. These bands are used by the Distribution Companies (DISCOs) to categorize customers and apply the appropriate tariff rates. The tariff bands are designed to ensure that customers pay tariffs that are commensurate with the level of service they receive.
+            </p>
+            <ul>
+                <li><strong>Band A:</strong> Customers in this band are expected to receive a minimum of 20 hours of electricity supply per day. These customers typically pay the highest tariffs.</li>
+                <li><strong>Band B:</strong> Customers in this band receive a minimum of 16 hours of electricity supply per day. Tariffs for this band are lower than Band A.</li>
+                <li><strong>Band C:</strong> Customers in this band receive a minimum of 12 hours of electricity supply per day. Tariffs are lower than Band B.</li>
+                <li><strong>Band D:</strong> Customers in this band receive an average of 8 hours of electricity supply per day.</li>
+                <li><strong>Band E:</strong> Customers in this band receive an average of 4 hours of electricity supply per day. These customers typically pay the lowest tariffs.
+                </li>
+            </ul>
+            <p>
+                It's important to note that the specific tariff rates and band classifications can vary across different DISCOs and may be subject to change based on regulatory reviews and updates. Customers are advised to check with their respective DISCOs for the most accurate and up-to-date information on tariff structures and applicable rates.
+            </p>
+        </div>
+        <div class="button-container">
+            <button class="catbutton">Domestic</button>
+            <button class="catbutton">Enterprise</button>
+            <button class="catbutton">Industrial</button>
+        </div>
+        <div id="energyButtonsContainer" style="display: none; text-align: center;">
+            <button class="energy-button" id="energyCostBtn">Calculate Cost of Energy</button>
+            <button class="energy-button" id="energyCalcBtn">Calculate Energy and Cost of Energy</button>
+        </div>
+        <form id="form1" style="display: none;">
+            <h2>Energy Cost Calculation Form</h2>
 
-        <div id="individual-input" class="energy-input-section">
-            <h3>Enter Individual Device Power and Usage Time</h3>
-            <div id="energy-devices-container">
-                <div class="device-entry">
-                    <label for="device_name_0">Device Name:</label>
-                    <input type="text" id="device_name_0" name="device_name" placeholder="Enter device name">
-                    <label for="device_power_0">Power (Watts):</label>
-                    <input type="text" id="device_power_0" name="device_power" placeholder="Enter power">
-                    <label for="device_time_0">Usage Time (Hours):</label>
-                    <input type="text" id="device_time_0" name="device_time" placeholder="Enter usage time">
+            <label for="disco">Disco:</label>
+            <select id="disco" name="disco">
+                <option value="">Select Disco</option>
+                <option value="abuja">Abuja Electricity Distribution Plc</option>
+                <option value="eko">Eko Electricity Distribution Plc</option>
+                <option value="ibadan">Ibadan Electricity Distribution Plc</option>
+                <option value="kano">Kano Electricity Distribution Plc</option>
+                <option value="ph">Port Harcourt Electricity Distribution Plc</option>
+            </select>
+
+            <label for="tariffBand">Tariff Band:</label>
+            <select id="tariffBand" name="tariffBand">
+                <option value="">Select Tariff Band</option>
+                <option value="A">Band A</option>
+                <option value="B">Band B</option>
+                <option value="C">Band C</option>
+                <option value="D">Band D</option>
+                <option value="E">Band E</option>
+            </select>
+
+            <label for="mdStatus">MD/Non-MD:</label>
+            <select id="mdStatus" name="mdStatus" required>
+                <option value="">Select MD Status</option>
+                <option value="MD">MD</option>
+                <option value="Non-MD">Non-MD</option>
+            </select>
+
+            <label for="unitCharge">Unit Charge (₦/kWh):</label>
+            <input type="number" id="unitCharge" name="unitCharge" step="0.01" readonly required>
+
+            <label for="energyConsumed">Energy Consumed (kWh):</label>
+            <input type="number" id="energyConsumed" name="energyConsumed" step="0.01" required>
+            
+
+            <button type="submit">Calculate Cost of Energy</button>
+            <p><br></p>
+            <a href="#" id="bandInfoLabel">If you don't know your band or MD Status click here</a>
+            <p><br></p>
+            
+            <label for="result">Cost of Energy(₦):</label>
+            <input type="text" id="result" name="result" readonly>
+            <p>If you would like to buy <span id="energyAmount"></span> kWh of electricity for <span id="energyCost"></span> click the button below</p>
+            <P>If you follow the energy calculations, this energy should last for [] amount of time</p>
+            <div class="form-actions">
+                <button id="buyEnergyBtn">Buy Electricity</button>
+            </div>
+            <div class="action-buttons">
+                <button type="button" id="generatePdf1">Generate PDF</button>
+                <button type="button" id="generateCsv1">Generate CSV</button>
+                <button type="button" id="share1">Share</button>
+            </div>
+        </form>
+
+        <form id="form2" style="display: none;">
+            <h2>Calculate Energy and Cost of Energy</h2>
+            <div id="deviceInputs">
+                <div class="device-row">
+                    <label for="device1">Device:</label>
+                    <input type="text" id="device1" name="device1" placeholder="e.g., Refrigerator">
+                    <label for="power1">Power (Watts):</label>
+                    <input type="number" id="power1" name="power1" step="0.01" placeholder="e.g., 100">
+                    <label for="time1">Time (Hours/Day):</label>
+                    <input type="number" id="time1" name="time1" step="0.01" placeholder="e.g., 24">
+                    <label for="energy1">Energy (kWh/Day):</label>
+                    <input type="text" id="energy1" name="energy1" readonly class="greyed-out-field">
+                    <button type="button" class="remove-btn">Remove</button>
                 </div>
             </div>
-            <button type="button" onclick="addEnergyDevice()">Add Another Device</button>
+            <button type="button" id="addDeviceBtn" class="add-device-btn">Add Another Device</button>
+            <label for="totalEnergyDisplay">Total Energy Consumed (kWh/Day):</label>
+            <input type="text" id="totalEnergyDisplay" name="totalEnergyDisplay" readonly class="greyed-out-field">
+
+            <hr style="margin-top: 20px; margin-bottom: 20px; border: 0; border-top: 1px solid #eee;">
+
+            <h3>Calculate Cost of Energy</h3>
+            <label for="disco2">Disco:</label>
+            <select id="disco2" name="disco2">
+                <option value="">Select Disco</option>
+                <option value="abuja">Abuja Electricity Distribution Plc</option>
+                <option value="eko">Eko Electricity Distribution Plc</option>
+                <option value="ibadan">Ibadan Electricity Distribution Plc</option>
+                <option value="kano">Kano Electricity Distribution Plc</option>
+                <option value="ph">Port Harcourt Electricity Distribution Plc</option>
+            </select>
+
+            <label for="tariffBand2">Tariff Band:</label>
+            <select id="tariffBand2" name="tariffBand2">
+                <option value="">Select Tariff Band</option>
+                <option value="A">Band A</option>
+                <option value="B">Band B</option>
+                <option value="C">Band C</option>
+                <option value="D">Band D</option>
+                <option value="E">Band E</option>
+            </select>
+
+            <label for="mdStatus2">MD/Non-MD:</label>
+            <select id="mdStatus2" name="mdStatus2" required>
+                <option value="">Select MD Status</option>
+                <option value="MD">MD</option>
+                <option value="Non-MD">Non-MD</option>
+            </select>
+
+            <label for="unitCharge2">Unit Charge (₦/kWh):</label>
+            <input type="number" id="unitCharge2" name="unitCharge2" step="0.01" readonly class="greyed-out-field" required>
+
+            <label for="energyConsumed2">Energy Consumed (kWh):</label>
+            <input type="number" id="energyConsumed2" name="energyConsumed2" step="0.01" readonly class="greyed-out-field" required>
+            
+            <button type="button" id="calculateCost2Btn">Calculate Cost of Energy</button>
+
+            <label for="costOfEnergy2">Cost of Energy(₦):</label>
+            <input type="text" id="costOfEnergy2" name="costOfEnergy2" readonly class="greyed-out-field">
+            <p><br></p>
+            <a href="#" id="bandInfoLabel2">If you don't know your band or MD Status click here</a>
+            <p>If you would like to buy <span id="energyAmount2"></span> kWh of electricity for <span id="energyCost2"></span> click the button below</p>
+            <P>If you follow the energy calculations, this energy should last for [] amount of time</p>
+            <button type="button" id="buyElecBtn">Buy Electricity</button>
+            <div class="action-buttons">
+                <button type="button" id="generatePdf2">Generate PDF</button>
+                <button type="button" id="generateCsv2">Generate CSV</button>
+                <button type="button" id="share2">Share</button>
+            </div>
+
+        </form>
+
+        <div id="miniform">
+            <span class="close-button">&times;</span>
+            <label for="discoSelect">Select Your Disco:</label>
+            <select id="discoSelect">
+                <option value="">Select Disco</option>
+                <option value="abuja">Abuja Electricity Distribution Plc</option>
+                <option value="eko">Eko Electricity Distribution Plc</option>
+                <option value="ibadan">Ibadan Electricity Distribution Plc</option>
+                <option value="kano">Kano Electricity Distribution Plc</option>
+                <option value="ph">Port Harcourt Electricity Distribution Plc</option>
+            </select>
         </div>
 
-        <div id="total-input" class="energy-input-section" style="display:none;">
-            <h3>Enter Total Power and Total Time</h3>
-            <label for="total_power">Total Power (Watts):</label>
-            <input type="text" id="total_power" name="total_power" placeholder="Enter total power"><br><br>
-            <label for="total_time">Total Time (Hours):</label>
-            <input type="text" id="total_time" name="total_time" placeholder="Enter total time"><br>
+        <div class="advert-container">
+            <p>Advert from partners and buying electricity tokens cheap</p>
         </div>
-        <br>
+    </div>
 
-        <div>
-            <h2>Enter Unit Cost of Energy</h2>
-            <label for="unit_cost">Unit Cost (e.g., ₦/kWh):</label>
-            <input type="text" id="unit_cost" name="unit_cost" placeholder="Enter unit cost"><br>
-        </div>
-        <br>
-
-        <input type="submit" value="Calculate Total Cost">
-    </form>
-
-    {% if error %}
-        <p style="color:red;">Error: {{ error }}</p>
-    {% endif %}
-
-    {% if total_cost > 0 %}
-        <h3>Total Energy Cost: {{ "%.2f"|format(total_cost) }}</h3>
-    {% elif request.method == 'POST' and not error %}
-        <p>No energy data provided to calculate cost.</p>
-    {% endif %}
-
-    <p><a href="/">Calculate Power Consumption</a> | <a href="/energy">Calculate Energy Consumption</a></p>
+    <div id="bottomRightButtons">
+        <button>Purchase Electricity</button>
+        <button>Energy Savings</button>
+        <button>Solar Recommendation</button>
+    </div>
 
     <script>
-        let energyDeviceCount = 1;
-        const individualInput = document.getElementById('individual-input');
-        const totalInput = document.getElementById('total-input');
-        const individualRadio = document.getElementById('individual_energy');
-        const totalRadio = document.getElementById('total_energy');
+        const catButtons = document.querySelectorAll('.catbutton');
+        const energyButtonsContainer = document.getElementById('energyButtonsContainer');
+        const energyCostBtn = document.getElementById('energyCostBtn');
+        const energyCalcBtn = document.getElementById('energyCalcBtn'); // Get the new button
+        const form1 = document.getElementById('form1');
+        const form2 = document.getElementById('form2'); // Get form2
+        const bandInfoLabel = document.getElementById('bandInfoLabel');
+        const bandInfoLabel2 = document.getElementById('bandInfoLabel2'); // New label for form2
+        const miniform = document.getElementById('miniform');
+        const miniformClose = miniform.querySelector('.close-button');
+        const resultField = document.getElementById('result');
+        const energyConsumedField = document.getElementById('energyConsumed');
+        const buyEnergyLabel = document.getElementById('buyEnergyLabel');
+        const energyAmountSpan = document.getElementById('energyAmount');
+        const energyCostSpan = document.getElementById('energyCost');
+        const deviceInputsContainer = document.getElementById('deviceInputs');
+        const addDeviceBtn = document.getElementById('addDeviceBtn');
+        const totalEnergyDisplay = document.getElementById('totalEnergyDisplay'); // Get the new total energy input
 
-        function addEnergyDevice() {
-            const container = document.getElementById('energy-devices-container');
-            const newDiv = document.createElement('div');
-            newDiv.classList.add('device-entry');
-            newDiv.innerHTML = `
-                <label for="device_name_${energyDeviceCount}">Device Name:</label>
-                <input type="text" id="device_name_${energyDeviceCount}" name="device_name" placeholder="Enter device name">
-                <label for="device_power_${energyDeviceCount}">Power (Watts):</label>
-                <input type="text" id="device_power_${energyDeviceCount}" name="device_power" placeholder="Enter power">
-                <label for="device_time_${energyDeviceCount}">Usage Time (Hours):</label>
-                <input type="text" id="device_time_${energyDeviceCount}" name="device_time" placeholder="Enter usage time">
-            `;
-            container.appendChild(newDiv);
-            energyDeviceCount++;
+        // Form2 specific elements
+        const disco2Select = document.getElementById('disco2');
+        const tariffBand2Select = document.getElementById('tariffBand2');
+        const mdStatus2Select = document.getElementById('mdStatus2');
+        const unitCharge2Input = document.getElementById('unitCharge2');
+        const energyConsumed2Input = document.getElementById('energyConsumed2');
+        const calculateCost2Btn = document.getElementById('calculateCost2Btn');
+        const costOfEnergy2Input = document.getElementById('costOfEnergy2');
+        const energyAmount2Span = document.getElementById('energyAmount2');
+        const energyCost2Span = document.getElementById('energyCost2');
+
+
+        let deviceCounter = 1;
+
+        // Tariff data (simplified for example)
+        const tariffData = {
+            'abuja': {
+                'A': {'MD': 55, 'Non-MD': 50},
+                'B': {'MD': 50, 'Non-MD': 45},
+                'C': {'MD': 45, 'Non-MD': 40},
+                'D': {'MD': 40, 'Non-MD': 35},
+                'E': {'MD': 35, 'Non-MD': 30},
+            },
+            'eko': {
+                'A': {'MD': 60, 'Non-MD': 55},
+                'B': {'MD': 55, 'Non-MD': 50},
+                'C': {'MD': 50, 'Non-MD': 45},
+                'D': {'MD': 45, 'Non-MD': 40},
+                'E': {'MD': 40, 'Non-MD': 35},
+            },
+            'ibadan': {
+                'A': {'MD': 58, 'Non-MD': 53},
+                'B': {'MD': 53, 'Non-MD': 48},
+                'C': {'MD': 48, 'Non-MD': 43},
+                'D': {'MD': 43, 'Non-MD': 38},
+                'E': {'MD': 38, 'Non-MD': 33},
+            },
+            'kano': {
+                'A': {'MD': 52, 'Non-MD': 47},
+                'B': {'MD': 47, 'Non-MD': 42},
+                'C': {'MD': 42, 'Non-MD': 37},
+                'D': {'MD': 37, 'Non-MD': 32},
+                'E': {'MD': 32, 'Non-MD': 27},
+            },
+            'ph': {
+                'A': {'MD': 57, 'Non-MD': 52},
+                'B': {'MD': 52, 'Non-MD': 47},
+                'C': {'MD': 47, 'Non-MD': 42},
+                'D': {'MD': 42, 'Non-MD': 37},
+                'E': {'MD': 37, 'Non-MD': 32},
+            },
+        };
+
+        function updateUnitPrice(discoElement, tariffBandElement, mdStatusElement, unitChargeElement) {
+            const disco = discoElement.value;
+            const tariffBand = tariffBandElement.value;
+            const mdStatus = mdStatusElement.value;
+            let unitPrice = 0;
+
+            if (tariffData[disco] && tariffData[disco][tariffBand] && tariffData[disco][tariffBand][mdStatus]) {
+                unitPrice = tariffData[disco][tariffBand][mdStatus];
+            }
+            unitChargeElement.value = unitPrice.toFixed(2);
         }
 
-        individualRadio.addEventListener('change', function() {
-            individualInput.style.display = 'block';
-            totalInput.style.display = 'none';
+
+        // Event Listeners
+        catButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                energyButtonsContainer.style.display = 'flex'; // Use flex to center buttons
+            });
         });
 
-        totalRadio.addEventListener('change', function() {
-            individualInput.style.display = 'none';
-            totalInput.style.display = 'block';
+        energyCostBtn.addEventListener('click', () => {
+            form1.style.display = 'block';
+            form2.style.display = 'none'; // Hide form2 if visible
         });
+
+        energyCalcBtn.addEventListener('click', () => {
+            form2.style.display = 'block';
+            form1.style.display = 'none'; // Hide form1 if visible
+            // When form2 is shown, populate energyConsumed2 with totalEnergyDisplay's value
+            energyConsumed2Input.value = totalEnergyDisplay.value;
+        });
+
+        bandInfoLabel.addEventListener('click', (event) => {
+            event.preventDefault();
+            miniform.classList.toggle('show');
+        });
+
+        miniformClose.addEventListener('click', () => {
+            miniform.classList.remove('show');
+        });
+
+        // New event listener for bandInfoLabel2
+        bandInfoLabel2.addEventListener('click', (event) => {
+            event.preventDefault();
+            miniform.classList.toggle('show');
+        });
+
+
+        form1.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const unitCharge = parseFloat(document.getElementById('unitCharge').value);
+            const energyConsumed = parseFloat(document.getElementById('energyConsumed').value);
+
+            if (!isNaN(unitCharge) && !isNaN(energyConsumed)) {
+                const cost = unitCharge * energyConsumed;
+                resultField.value = cost.toFixed(2);
+                buyEnergyLabel.style.display = "block";
+                energyAmountSpan.textContent = energyConsumed;
+                energyCostSpan.textContent = cost.toFixed(2);
+            } else {
+                resultField.value = 'Invalid input';
+                buyEnergyLabel.style.display = "none";
+            }
+        });
+
+        // Form2 (Energy Consumption Calculator) Logic
+        function addDeviceRow() {
+            deviceCounter++;
+            const newRow = document.createElement('div');
+            newRow.classList.add('device-row');
+            newRow.innerHTML = `
+                <label for="device${deviceCounter}">Device:</label>
+                <input type="text" id="device${deviceCounter}" name="device${deviceCounter}" placeholder="e.g., Refrigerator">
+                <label for="power${deviceCounter}">Power (Watts):</label>
+                <input type="number" id="power${deviceCounter}" name="power${deviceCounter}" step="0.01" placeholder="e.g., 100">
+                <label for="time${deviceCounter}">Time (Hours/Day):</label>
+                <input type="number" id="time${deviceCounter}" name="time${deviceCounter}" step="0.01" placeholder="e.g., 24">
+                <label for="energy${deviceCounter}">Energy (kWh/Day):</label>
+                <input type="text" id="energy${deviceCounter}" name="energy${deviceCounter}" readonly class="greyed-out-field">
+                <button type="button" class="remove-btn">Remove</button>
+            `;
+            deviceInputsContainer.appendChild(newRow);
+
+            // Add event listeners for new inputs to recalculate energy
+            newRow.querySelector(`#power${deviceCounter}`).addEventListener('input', calculateDeviceEnergy);
+            newRow.querySelector(`#time${deviceCounter}`).addEventListener('input', calculateDeviceEnergy);
+            newRow.querySelector('.remove-btn').addEventListener('click', function() {
+                newRow.remove();
+                calculateTotalEnergy();
+            });
+        }
+
+        function calculateDeviceEnergy() {
+            let totalEnergy = 0;
+            document.querySelectorAll('.device-row').forEach(row => {
+                const powerInput = row.querySelector('input[name^="power"]');
+                const timeInput = row.querySelector('input[name^="time"]');
+                const energyOutput = row.querySelector('input[name^="energy"]');
+
+                const power = parseFloat(powerInput.value);
+                const time = parseFloat(timeInput.value);
+
+                if (!isNaN(power) && !isNaN(time)) {
+                    const energy = (power * time) / 1000; // Convert Wh to kWh
+                    energyOutput.value = energy.toFixed(2);
+                    totalEnergy += energy;
+                } else {
+                    energyOutput.value = '';
+                }
+            });
+            totalEnergyDisplay.value = totalEnergy.toFixed(2); // Update the total energy input field
+        }
+
+        function calculateTotalEnergy() {
+            let totalEnergy = 0;
+            document.querySelectorAll('.device-row').forEach(row => {
+                const energyOutput = row.querySelector('input[name^="energy"]');
+                const energy = parseFloat(energyOutput.value);
+                if (!isNaN(energy)) {
+                    totalEnergy += energy;
+                }
+            });
+            totalEnergyDisplay.value = totalEnergy.toFixed(2); // Update the total energy input field
+        }
+
+
+        addDeviceBtn.addEventListener('click', addDeviceRow);
+
+        // Initial event listeners for the first row
+        document.getElementById('power1').addEventListener('input', calculateDeviceEnergy);
+        document.getElementById('time1').addEventListener('input', calculateDeviceEnergy);
+        document.querySelector('#deviceInputs .remove-btn').addEventListener('click', function() {
+            this.closest('.device-row').remove();
+            calculateTotalEnergy();
+        });
+
+        // Event listeners for form1 selects
+        document.getElementById('disco').addEventListener('change', () => updateUnitPrice(document.getElementById('disco'), document.getElementById('tariffBand'), document.getElementById('mdStatus'), document.getElementById('unitCharge')));
+        document.getElementById('tariffBand').addEventListener('change', () => updateUnitPrice(document.getElementById('disco'), document.getElementById('tariffBand'), document.getElementById('mdStatus'), document.getElementById('unitCharge')));
+        document.getElementById('mdStatus').addEventListener('change', () => updateUnitPrice(document.getElementById('disco'), document.getElementById('tariffBand'), document.getElementById('mdStatus'), document.getElementById('unitCharge')));
+
+        // Event listeners for form2 selects (new)
+        disco2Select.addEventListener('change', () => updateUnitPrice(disco2Select, tariffBand2Select, mdStatus2Select, unitCharge2Input));
+        tariffBand2Select.addEventListener('change', () => updateUnitPrice(disco2Select, tariffBand2Select, mdStatus2Select, unitCharge2Input));
+        mdStatus2Select.addEventListener('change', () => updateUnitPrice(disco2Select, tariffBand2Select, mdStatus2Select, unitCharge2Input));
+
+
+        // Form2 submission (optional, depends on what "Calculate Total Energy & Cost" should do)
+        form2.addEventListener('submit', (event) => {
+            event.preventDefault();
+            // This button is now for "Calculate Total Energy & Cost" based on devices, not the cost calculation section
+            // The cost calculation will be handled by calculateCost2Btn
+        });
+
+        // New event listener for the "Calculate Cost of Energy" button in form2
+        calculateCost2Btn.addEventListener('click', () => {
+            const unitCharge = parseFloat(unitCharge2Input.value);
+            const energyConsumed = parseFloat(energyConsumed2Input.value); // This should be the total energy from devices
+
+            if (!isNaN(unitCharge) && !isNaN(energyConsumed)) {
+                const cost = unitCharge * energyConsumed;
+                costOfEnergy2Input.value = cost.toFixed(2);
+                energyAmount2Span.textContent = energyConsumed;
+                energyCost2Span.textContent = cost.toFixed(2);
+            } else {
+                costOfEnergy2Input.value = 'Invalid input';
+            }
+        });
+
     </script>
 </body>
 </html>
