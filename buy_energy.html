@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Electricity Tokens</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for flash messages for better visibility */
+        .flash-message {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.375rem; /* rounded-md */
+        }
+        .flash-message.bg-red-100 {
+            background-color: #fee2e2; /* red-100 */
+            color: #ef4444; /* red-500 */
+            border-color: #fca5a5; /* red-300 */
+        }
+        .flash-message.bg-blue-100 {
+            background-color: #dbeafe; /* blue-100 */
+            color: #3b82f6; /* blue-500 */
+            border-color: #93c5fd; /* blue-300 */
+        }
+        .flash-message.bg-green-100 {
+            background-color: #dcfce7; /* green-100 */
+            color: #22c55e; /* green-500 */
+            border-color: #86efac; /* green-300 */
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col items-center p-4 sm:p-6 lg:p-8 relative">
+    <div class="absolute top-4 right-4 sm:top-6 sm:right-6 lg:top-8 lg:right-8">
+        <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50">
+            gopro
+        </button>
+    </div>
+
+    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-md mx-auto transform transition-all duration-300 hover:shadow-xl mt-10">
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-6 text-center">Buy Electricity Tokens</h1>
+    </div>
+
+    <div class="w-full max-w-md mx-auto mt-6 p-4 rounded-lg bg-blue-50 border border-blue-200 shadow-sm">
+        <p class="text-sm text-blue-800 text-center">
+            <span class="font-semibold">Important:</span> Electricity tariffs in Nigeria are subject to changes, and a 7.5% Value Added Tax (VAT) is applied to all electricity purchases. Also periodically check your band and tariff rates with your discos as this is subject to change by the discos without us being informed
+        </p>
+    </div>
+
+    <div class="w-full max-w-md mx-auto mt-5 flex flex-col sm:flex-row justify-center gap-4">
+        <button id="purchaseNairaBtn" class="purchasebill bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 w-full sm:w-auto">
+            Purchase by Naira
+        </button>
+        <button id="purchaseKwhBtn" class="purchasebill bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 w-full sm:w-auto">
+            Purchase by KW/h
+        </button>
+        <button id="purchaseUnitsBtn" class="purchasebill bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50 w-full sm:w-auto">
+            Purchase by Units
+        </button>
+    </div>
+
+    <div id="form1" class="hidden w-full max-w-md mx-auto mt-6 p-6 rounded-xl shadow-lg bg-white border border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Select VAT Option</h2>
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mb-4">
+            <label class="inline-flex items-center">
+                <input type="radio" class="form-radio text-blue-600" name="vat_option" value="with_vat" id="withVatRadio">
+                <span class="ml-2 text-gray-700">With VAT</span>
+            </label>
+            <label class="inline-flex items-center">
+                <input type="radio" class="form-radio text-blue-600" name="vat_option" value="without_vat" id="withoutVatRadio">
+                <span class="ml-2 text-gray-700">Without VAT</span>
+            </label>
+        </div>
+
+        <div id="amountNairaField" class="hidden form-group mt-4">
+            <label for="amount_naira" class="block text-sm font-semibold text-gray-700 mb-2">Enter Amount (₦):</label>
+            <input type="number" id="amount_naira" name="amount_naira"
+                   placeholder="e.g., 5000"
+                   min="1000" step="100"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800 placeholder-gray-400">
+            <p class="text-xs text-gray-500 mt-2">Minimum purchase NGN 1,000.</p>
+
+            <div id="vatDeductionDisplay" class="hidden mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md text-sm text-yellow-800">
+                <span class="font-semibold">7.5% VAT has been deducted, you would get electricity tokens equivalent to:</span> <span id="deductedAmount" class="font-bold"></span>
+            </div>
+
+            <div id="vatAdditionDisplay" class="hidden mt-4 p-3 bg-green-50 border border-green-200 rounded-md text-sm text-green-800">
+                <span class="font-semibold">There is a VAT of 7.5% added, your total amount to be paid is:</span> <span id="addedAmount" class="font-bold"></span>
+            </div>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="disco_select" class="block text-sm font-semibold text-gray-700 mb-2">Select Disco:</label>
+            <select id="disco_select" name="disco_select"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800">
+                <option value="">-- Select Distribution Company --</option>
+                <option value="abuja_disco">Abuja Disco (AEDC)</option>
+                <option value="eko_disco">Eko Disco (EKEDC)</option>
+                <option value="ibadan_disco">Ibadan Disco (IBEDC)</option>
+                <option value="ikeja_disco">Ikeja Disco (IKEDC)</option>
+                <option value="kano_disco">Kano Disco (KEDCO)</option>
+                <option value="port_harcourt_disco">Port Harcourt Disco (PHEDC)</option>
+                <option value="enugu_disco">Enugu Disco (EEDC)</option>
+                <option value="kaduna_disco">Kaduna Disco (KAEDC)</option>
+                <option value="jos_disco">Jos Disco (JEDC)</option>
+                <option value="benin_disco">Benin Disco (BEDC)</option>
+                <option value="yola_disco">Yola Disco (YEDC)</option>
+            </select>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="tariff_band_select" class="block text-sm font-semibold text-gray-700 mb-2">Select Tariff Band:</label>
+            <select id="tariff_band_select" name="tariff_band_select"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800">
+                <option value="">-- Select Tariff Band --</option>
+                <option value="b1">Band A</option>
+                <option value="b2">Band B</option>
+                <option value="b3">Band C</option>
+                <option value="b4">Band D</option>
+                <option value="b5">Band E</option>
+            </select>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="md_non_md_select" class="block text-sm font-semibold text-gray-700 mb-2">Select MD/non-MD:</label>
+            <select id="md_non_md_select" name="md_non_md_select"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800">
+                <option value="">-- Select Meter Type --</option>
+                <option value="md">MD (Maximum Demand)</option>
+                <option value="non_md">Non-MD</option>
+            </select>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="meter_number_input" class="block text-sm font-semibold text-gray-700 mb-2">Input Meter Number:</label>
+            <input type="text" id="meter_number_input" name="meter_number_input"
+                   placeholder="e.g., 12345678901"
+                   pattern="\d{11}" title="Please enter an 11-digit meter number"
+                   maxlength="11"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800 placeholder-gray-400">
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="phone_number_input" class="block text-sm font-semibold text-gray-700 mb-2">Input Phone Number:</label>
+            <input type="tel" id="phone_number_input" name="phone_number_input"
+                   placeholder="e.g., 08012345678"
+                   pattern="[0-9]{11}" title="Please enter an 11-digit phone number"
+                   maxlength="11"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800 placeholder-gray-400">
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="email_input" class="block text-sm font-semibold text-gray-700 mb-2">Input Email (Optional):</label>
+            <input type="email" id="email_input" name="email_input"
+                   placeholder="e.g., your_email@example.com"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800 placeholder-gray-400">
+        </div>
+
+        <div id="finalSummaryDisplay" class="hidden mt-6 p-4 bg-blue-100 border border-blue-300 rounded-lg shadow-md text-left">
+            <p class="text-sm text-blue-800 mb-1">
+                <span class="font-semibold">Electricity cost:</span> <span id="summaryElectricityCost" class="font-bold"></span>
+            </p>
+            <p class="text-sm text-blue-800 mb-1">
+                <span class="font-semibold">VAT:</span> <span id="summaryVatAmount" class="font-bold"></span>
+            </p>
+            <p class="text-sm text-blue-800 mb-1">
+                <span class="font-semibold">Service Charge:</span> <span id="summaryServiceCharge" class="font-bold"></span>
+            </p>
+            <p class="text-sm text-blue-800 mb-1">
+                <span class="font-semibold">Unit Cost:</span> <span id="summaryUnitCost" class="font-bold"></span>
+            </p>
+            <p class="text-base font-semibold text-blue-800 mt-2">
+                Total amount to be paid: <span id="totalAmountPaid" class="font-extrabold text-blue-900 text-lg"></span>
+            </p>
+            <p class="text-sm text-blue-700 mt-2">
+                Projected Units: <span id="projectedTokens" class="font-bold text-blue-900">X units</span>
+            </p>
+        </div>
+
+        <div class="mt-4 text-center text-xs text-gray-500 p-2 border border-gray-200 rounded-md bg-gray-50">
+            <p>
+                <span class="font-semibold">Disclaimer:</span> The projected units are estimates. The actual units received can be changed abruptly by the Distribution Companies (Discos) due to tariff adjustments or other factors. You are free to report any perceived shortfall to your Disco.
+            </p>
+        </div>
+
+        <div class="flex justify-end mt-6">
+            <button id="buyNowBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                Buy Now
+            </button>
+        </div>
+    </div>
+
+    <div id="form2" class="hidden w-full max-w-md mx-auto mt-6 p-6 rounded-xl shadow-lg bg-white border border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Purchase by KW/h</h2>
+
+        <div class="form-group mt-4">
+            <label for="energy_kwh_input" class="block text-sm font-semibold text-gray-700 mb-2">Input Energy (KW/h):</label>
+            <input type="number" id="energy_kwh_input" name="energy_kwh_input"
+                   placeholder="e.g., 50"
+                   min="1" step="1"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800 placeholder-gray-400">
+            <p class="text-xs text-gray-500 mt-2">Enter the desired energy in kilowatt-hours.</p>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="disco_select_kwh" class="block text-sm font-semibold text-gray-700 mb-2">Select Disco:</label>
+            <select id="disco_select_kwh" name="disco_select_kwh"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800">
+                <option value="">-- Select Distribution Company --</option>
+                <option value="abuja_disco">Abuja Disco (AEDC)</option>
+                <option value="eko_disco">Eko Disco (EKEDC)</option>
+                <option value="ibadan_disco">Ibadan Disco (IBEDC)</option>
+                <option value="ikeja_disco">Ikeja Disco (IKEDC)</option>
+                <option value="kano_disco">Kano Disco (KEDCO)</option>
+                <option value="port_harcourt_disco">Port Harcourt Disco (PHEDC)</option>
+                <option value="enugu_disco">Enugu Disco (EEDC)</option>
+                <option value="kaduna_disco">Kaduna Disco (KAEDC)</option>
+                <option value="jos_disco">Jos Disco (JEDC)</option>
+                <option value="benin_disco">Benin Disco (BEDC)</option>
+                <option value="yola_disco">Yola Disco (YEDC)</option>
+            </select>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="tariff_band_select_kwh" class="block text-sm font-semibold text-gray-700 mb-2">Select Tariff Band:</label>
+            <select id="tariff_band_select_kwh" name="tariff_band_select_kwh"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800">
+                <option value="">-- Select Tariff Band --</option>
+                <option value="b1">Band A</option>
+                <option value="b2">Band B</option>
+                <option value="b3">Band C</option>
+                <option value="b4">Band D</option>
+                <option value="b5">Band E</option>
+            </select>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="md_non_md_select_kwh" class="block text-sm font-semibold text-gray-700 mb-2">Select MD/non-MD:</label>
+            <select id="md_non_md_select_kwh" name="md_non_md_select_kwh"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800">
+                <option value="">-- Select Meter Type --</option>
+                <option value="md">MD (Maximum Demand)</option>
+                <option value="non_md">Non-MD</option>
+            </select>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="meter_number_input_kwh" class="block text-sm font-semibold text-gray-700 mb-2">Input Meter Number:</label>
+            <input type="text" id="meter_number_input_kwh" name="meter_number_input_kwh"
+                   placeholder="e.g., 12345678901"
+                   pattern="\d{11}" title="Please enter an 11-digit meter number"
+                   maxlength="11"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800 placeholder-gray-400">
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="phone_number_input_kwh" class="block text-sm font-semibold text-gray-700 mb-2">Input Phone Number:</label>
+            <input type="tel" id="phone_number_input_kwh" name="phone_number_input_kwh"
+                   placeholder="e.g., 08012345678"
+                   pattern="[0-9]{11}" title="Please enter an 11-digit phone number"
+                   maxlength="11"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800 placeholder-gray-400">
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="email_input_kwh" class="block text-sm font-semibold text-gray-700 mb-2">Input Email (Optional):</label>
+            <input type="email" id="email_input_kwh" name="email_input_kwh"
+                   placeholder="e.g., your_email@example.com"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800 placeholder-gray-400">
+        </div>
+
+        <div id="kwhSummaryDisplay" class="hidden mt-6 p-4 bg-green-100 border border-green-300 rounded-lg shadow-md text-left">
+            <p class="text-sm text-green-800 mb-1">
+                <span class="font-semibold">Amount of Energy:</span> <span id="summaryEnergyKwh" class="font-bold"></span>
+            </p>
+            <p class="text-sm text-green-800 mb-1">
+                <span class="font-semibold">Unit Cost:</span> <span id="summaryUnitCostKwh" class="font-bold"></span>
+            </p>
+            <p class="text-sm text-green-800 mb-1">
+                <span class="font-semibold">VAT:</span> <span id="summaryVatAmountKwh" class="font-bold"></span>
+            </p>
+            <p class="text-sm text-green-800 mb-1">
+                <span class="font-semibold">Service Charge:</span> <span id="summaryServiceChargeKwh" class="font-bold"></span>
+            </p>
+            <p class="text-base font-semibold text-green-800 mt-2">
+                Total: <span id="totalAmountPaidKwh" class="font-extrabold text-green-900 text-lg"></span>
+            </p>
+            <p class="text-sm text-green-700 mt-2">
+                Amount of Units: <span id="projectedUnitsKwh" class="font-bold text-green-900">X units</span>
+            </p>
+        </div>
+
+        <div class="mt-4 text-center text-xs text-gray-500 p-2 border border-gray-200 rounded-md bg-gray-50">
+            <p>
+                <span class="font-semibold">Disclaimer:</span> The projected units are estimates. The actual units received can be changed abruptly by the Distribution Companies (Discos) due to tariff adjustments or other factors. You are free to report any perceived shortfall to your Disco.
+            </p>
+        </div>
+
+        <div class="flex justify-end mt-6">
+            <button id="buyNowKwhBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+                Buy Now (KW/h)
+            </button>
+        </div>
+    </div>
+
+    <div id="form3" class="hidden w-full max-w-md mx-auto mt-6 p-6 rounded-xl shadow-lg bg-white border border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Purchase by Units</h2>
+
+        <div class="form-group mt-4">
+            <label for="units_input" class="block text-sm font-semibold text-gray-700 mb-2">Input Units:</label>
+            <input type="number" id="units_input" name="units_input"
+                   placeholder="e.g., 100"
+                   min="1" step="1"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800 placeholder-gray-400">
+            <p class="text-xs text-gray-500 mt-2">Enter the desired number of electricity units.</p>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="disco_select_units" class="block text-sm font-semibold text-gray-700 mb-2">Select Disco:</label>
+            <select id="disco_select_units" name="disco_select_units"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800">
+                <option value="">-- Select Distribution Company --</option>
+                <option value="abuja_disco">Abuja Disco (AEDC)</option>
+                <option value="eko_disco">Eko Disco (EKEDC)</option>
+                <option value="ibadan_disco">Ibadan Disco (IBEDC)</option>
+                <option value="ikeja_disco">Ikeja Disco (IKEDC)</option>
+                <option value="kano_disco">Kano Disco (KEDCO)</option>
+                <option value="port_harcourt_disco">Port Harcourt Disco (PHEDC)</option>
+                <option value="enugu_disco">Enugu Disco (EEDC)</option>
+                <option value="kaduna_disco">Kaduna Disco (KAEDC)</option>
+                <option value="jos_disco">Jos Disco (JEDC)</option>
+                <option value="benin_disco">Benin Disco (BEDC)</option>
+                <option value="yola_disco">Yola Disco (YEDC)</option>
+            </select>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="tariff_band_select_units" class="block text-sm font-semibold text-gray-700 mb-2">Select Tariff Band:</label>
+            <select id="tariff_band_select_units" name="tariff_band_select_units"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800">
+                <option value="">-- Select Tariff Band --</option>
+                <option value="b1">Band A</option>
+                <option value="b2">Band B</option>
+                <option value="b3">Band C</option>
+                <option value="b4">Band D</option>
+                <option value="b5">Band E</option>
+            </select>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="md_non_md_select_units" class="block text-sm font-semibold text-gray-700 mb-2">Select MD/non-MD:</label>
+            <select id="md_non_md_select_units" name="md_non_md_select_units"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800">
+                <option value="">-- Select Meter Type --</option>
+                <option value="md">MD (Maximum Demand)</option>
+                <option value="non_md">Non-MD</option>
+            </select>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="meter_number_input_units" class="block text-sm font-semibold text-gray-700 mb-2">Input Meter Number:</label>
+            <input type="text" id="meter_number_input_units" name="meter_number_input_units"
+                   placeholder="e.g., 12345678901"
+                   pattern="\d{11}" title="Please enter an 11-digit meter number"
+                   maxlength="11"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800 placeholder-gray-400">
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="phone_number_input_units" class="block text-sm font-semibold text-gray-700 mb-2">Input Phone Number:</label>
+            <input type="tel" id="phone_number_input_units" name="phone_number_input_units"
+                   placeholder="e.g., 08012345678"
+                   pattern="[0-9]{11}" title="Please enter an 11-digit phone number"
+                   maxlength="11"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800 placeholder-gray-400">
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="email_input_units" class="block text-sm font-semibold text-gray-700 mb-2">Input Email (Optional):</label>
+            <input type="email" id="email_input_units" name="email_input_units"
+                   placeholder="e.g., your_email@example.com"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition duration-200 ease-in-out text-gray-800 placeholder-gray-400">
+        </div>
+
+        <div id="unitsSummaryDisplay" class="hidden mt-6 p-4 bg-yellow-100 border border-yellow-300 rounded-lg shadow-md text-left">
+            <p class="text-sm text-yellow-800 mb-1">
+                <span class="font-semibold">Amount of Energy:</span> <span id="summaryEnergyUnits" class="font-bold"></span>
+            </p>
+            <p class="text-sm text-yellow-800 mb-1">
+                <span class="font-semibold">Unit Cost:</span> <span id="summaryUnitCostUnits" class="font-bold"></span>
+            </p>
+            <p class="text-sm text-yellow-800 mb-1">
+                <span class="font-semibold">VAT:</span> <span id="summaryVatAmountUnits" class="font-bold"></span>
+            </p>
+            <p class="text-sm text-yellow-800 mb-1">
+                <span class="font-semibold">Service Charge:</span> <span id="summaryServiceChargeUnits" class="font-bold"></span>
+            </p>
+            <p class="text-base font-semibold text-yellow-800 mt-2">
+                Total: <span id="totalAmountPaidUnits" class="font-extrabold text-yellow-900 text-lg"></span>
+            </p>
+            <p class="text-sm text-yellow-700 mt-2">
+                Amount of Units: <span id="projectedUnitsUnits" class="font-bold text-yellow-900">X units</span>
+            </p>
+        </div>
+
+        <div class="mt-4 text-center text-xs text-gray-500 p-2 border border-gray-200 rounded-md bg-gray-50">
+            <p>
+                <span class="font-semibold">Disclaimer:</span> The projected units are estimates. The actual units received can be changed abruptly by the Distribution Companies (Discos) due to tariff adjustments or other factors. You are free to report any perceived shortfall to your Disco.
+            </p>
+        </div>
+
+        <div class="flex justify-end mt-6">
+            <button id="buyNowUnitsBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">
+                Buy Now (Units)
+            </button>
+        </div>
+    </div>
+
+    <div class="w-full max-w-md mx-auto mt-8 p-6 rounded-xl shadow-lg bg-white border border-gray-200">
+        <h2 class="text-xl font-extrabold text-gray-800 mb-4 text-center">Adverts and Promos for Subscribers</h2>
+        <div class="space-y-4">
+            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h3 class="font-semibold text-blue-700">Special Offer: Get 5% Bonus Units!</h3>
+                <p class="text-sm text-blue-600">Purchase over ₦10,000 worth of tokens this month and receive an extra 5% bonus units credited to your meter. Limited time offer!</p>
+            </div>
+            <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h3 class="font-semibold text-green-700">Refer a Friend, Get ₦500 Off!</h3>
+                <p class="text-sm text-green-600">Refer a new subscriber who completes their first purchase, and you both get ₦500 off your next electricity token purchase.</p>
+            </div>
+            <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <h3 class="font-semibold text-purple-700">Premium Subscriber Perks!</h3>
+                <p class="text-sm text-purple-600">Upgrade to our premium plan for priority customer support, exclusive discounts, and early access to new features.</p>
+            </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-4 text-center">Terms and conditions apply. Offers subject to change.</p>
+    </div>
+
+    <div class="w-full max-w-md mx-auto mt-8 flex flex-col sm:flex-row justify-center gap-4">
+        <button id="energySavingsBtn" class="recobutton bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 w-full sm:w-auto">
+            Energy Savings
+        </button>
+        <button id="solarRecommendationBtn" class="recobutton bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 w-full sm:w-auto">
+            Solar Recommendation
+        </button>
+        <button id="calculateEnergyBtn" class="recobutton bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 w-full sm:w-auto">
+            Calculate Energy
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const purchaseNairaBtn = document.getElementById('purchaseNairaBtn');
+            const purchaseKwhBtn = document.getElementById('purchaseKwhBtn');
+            const purchaseUnitsBtn = document.getElementById('purchaseUnitsBtn');
+            const form1 = document.getElementById('form1');
+            const form2 = document.getElementById('form2');
+            const form3 = document.getElementById('form3');
+
+            const withVatRadio = document.getElementById('withVatRadio');
+            const withoutVatRadio = document.getElementById('withoutVatRadio');
+            const amountNairaField = document.getElementById('amountNairaField');
+            const amountNairaInput = document.getElementById('amount_naira');
+            const vatDeductionDisplay = document.getElementById('vatDeductionDisplay');
+            const deductedAmountSpan = document.getElementById('deductedAmount');
+            const vatAdditionDisplay = document.getElementById('vatAdditionDisplay');
+            const addedAmountSpan = document.getElementById('addedAmount');
+            const finalSummaryDisplay = document.getElementById('finalSummaryDisplay');
+            const totalAmountPaidSpan = document.getElementById('totalAmountPaid');
+            const projectedTokensSpan = document.getElementById('projectedTokens');
+            const summaryElectricityCostSpan = document.getElementById('summaryElectricityCost');
+            const summaryVatAmountSpan = document.getElementById('summaryVatAmount');
+            const summaryServiceChargeSpan = document.getElementById('summaryServiceCharge');
+            const summaryUnitCostSpan = document.getElementById('summaryUnitCost');
+
+            // Form1 field references
+            const tariffBandSelect = document.getElementById('tariff_band_select');
+            const mdNonMdSelect = document.getElementById('md_non_md_select');
+            const discoSelect = document.getElementById('disco_select');
+            const meterNumberInput = document.getElementById('meter_number_input');
+            const phoneNumberInput = document.getElementById('phone_number_input');
+            const emailInput = document.getElementById('email_input');
+
+            // Form2 field references
+            const energyKwhInput = document.getElementById('energy_kwh_input');
+            const discoSelectKwh = document.getElementById('disco_select_kwh');
+            const tariffBandSelectKwh = document.getElementById('tariff_band_select_kwh');
+            const mdNonMdSelectKwh = document.getElementById('md_non_md_select_kwh');
+            const meterNumberInputKwh = document.getElementById('meter_number_input_kwh');
+            const phoneNumberInputKwh = document.getElementById('phone_number_input_kwh');
+            const emailInputKwh = document.getElementById('email_input_kwh');
+
+            const kwhSummaryDisplay = document.getElementById('kwhSummaryDisplay');
+            const summaryEnergyKwhSpan = document.getElementById('summaryEnergyKwh');
+            const summaryUnitCostKwhSpan = document.getElementById('summaryUnitCostKwh');
+            const summaryVatAmountKwhSpan = document.getElementById('summaryVatAmountKwh');
+            const summaryServiceChargeKwhSpan = document.getElementById('summaryServiceChargeKwh');
+            const totalAmountPaidKwhSpan = document.getElementById('totalAmountPaidKwh');
+            const projectedUnitsKwhSpan = document.getElementById('projectedUnitsKwh');
+
+            // Form3 field references
+            const unitsInput = document.getElementById('units_input');
+            const discoSelectUnits = document.getElementById('disco_select_units');
+            const tariffBandSelectUnits = document.getElementById('tariff_band_select_units');
+            const mdNonMdSelectUnits = document.getElementById('md_non_md_select_units');
+            const meterNumberInputUnits = document.getElementById('meter_number_input_units');
+            const phoneNumberInputUnits = document.getElementById('phone_number_input_units');
+            const emailInputUnits = document.getElementById('email_input_units');
+
+            const unitsSummaryDisplay = document.getElementById('unitsSummaryDisplay');
+            const summaryEnergyUnitsSpan = document.getElementById('summaryEnergyUnits');
+            const summaryUnitCostUnitsSpan = document.getElementById('summaryUnitCostUnits');
+            const summaryVatAmountUnitsSpan = document.getElementById('summaryVatAmountUnits');
+            const summaryServiceChargeUnitsSpan = document.getElementById('summaryServiceChargeUnits');
+            const totalAmountPaidUnitsSpan = document.getElementById('totalAmountPaidUnits');
+            const projectedUnitsUnitsSpan = document.getElementById('projectedUnitsUnits');
+
+            const buyNowBtn = document.getElementById('buyNowBtn');
+            const buyNowKwhBtn = document.getElementById('buyNowKwhBtn');
+            const buyNowUnitsBtn = document.getElementById('buyNowUnitsBtn');
+
+            // New recommendation button references
+            const energySavingsBtn = document.getElementById('energySavingsBtn');
+            const solarRecommendationBtn = document.getElementById('solarRecommendationBtn');
+            const calculateEnergyBtn = document.getElementById('calculateEnergyBtn');
+
+            const VAT_RATE = 0.075; // 7.5% VAT
+            const SERVICE_CHARGE = 100; // ₦100 service charge
+            const KWH_PRICE_PER_UNIT = 50; // Example: ₦50 per KW/h unit (This would vary by Disco/Band)
+
+            function updateFinalSummaryNaira(baseAmount) {
+                if (isNaN(baseAmount) || baseAmount < 1000) {
+                    finalSummaryDisplay.classList.add('hidden');
+                    return;
+                }
+
+                let electricityCost = 0;
+                let vatAmount = 0;
+                let finalAmountToPay = 0;
+                let tokensEquivalentAmount = 0;
+                const unitCost = KWH_PRICE_PER_UNIT;
+
+                if (withVatRadio.checked) {
+                    electricityCost = baseAmount / (1 + VAT_RATE);
+                    vatAmount = baseAmount - electricityCost;
+                    tokensEquivalentAmount = electricityCost;
+                    finalAmountToPay = baseAmount + SERVICE_CHARGE;
+                } else if (withoutVatRadio.checked) {
+                    electricityCost = baseAmount;
+                    vatAmount = baseAmount * VAT_RATE;
+                    tokensEquivalentAmount = electricityCost;
+                    finalAmountToPay = baseAmount + vatAmount + SERVICE_CHARGE;
+                }
+
+                summaryElectricityCostSpan.textContent = `₦${electricityCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                summaryVatAmountSpan.textContent = `₦${vatAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                summaryServiceChargeSpan.textContent = `₦${SERVICE_CHARGE.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                summaryUnitCostSpan.textContent = `₦${unitCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/unit`;
+                totalAmountPaidSpan.textContent = `₦${finalAmountToPay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                projectedTokensSpan.textContent = `${(tokensEquivalentAmount / KWH_PRICE_PER_UNIT).toLocaleString(undefined, { maximumFractionDigits: 0 })} units`;
+
+                finalSummaryDisplay.classList.remove('hidden');
+            }
+
+            function updateFinalSummaryKwh(energyKwh) {
+                if (isNaN(energyKwh) || energyKwh <= 0) {
+                    kwhSummaryDisplay.classList.add('hidden');
+                    return;
+                }
+
+                const unitCost = KWH_PRICE_PER_UNIT;
+                const electricityCost = energyKwh * unitCost;
+                const vatAmount = electricityCost * VAT_RATE;
+                const totalAmountToPay = electricityCost + vatAmount + SERVICE_CHARGE;
+
+                summaryEnergyKwhSpan.textContent = `${energyKwh.toLocaleString(undefined, { maximumFractionDigits: 0 })} KW/h`;
+                summaryUnitCostKwhSpan.textContent = `₦${unitCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/KW/h`;
+                summaryVatAmountKwhSpan.textContent = `₦${vatAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                summaryServiceChargeKwhSpan.textContent = `₦${SERVICE_CHARGE.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                totalAmountPaidKwhSpan.textContent = `₦${totalAmountToPay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                projectedUnitsKwhSpan.textContent = `${energyKwh.toLocaleString(undefined, { maximumFractionDigits: 0 })} units`;
+
+                kwhSummaryDisplay.classList.remove('hidden');
+            }
+
+            function updateFinalSummaryUnits(units) {
+                if (isNaN(units) || units <= 0) {
+                    unitsSummaryDisplay.classList.add('hidden');
+                    return;
+                }
+
+                const unitCost = KWH_PRICE_PER_UNIT;
+                const electricityCost = units * unitCost;
+                const vatAmount = electricityCost * VAT_RATE;
+                const totalAmountToPay = electricityCost + vatAmount + SERVICE_CHARGE;
+
+                summaryEnergyUnitsSpan.textContent = `${units.toLocaleString(undefined, { maximumFractionDigits: 0 })} units`;
+                summaryUnitCostUnitsSpan.textContent = `₦${unitCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/unit`;
+                summaryVatAmountUnitsSpan.textContent = `₦${vatAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                summaryServiceChargeUnitsSpan.textContent = `₦${SERVICE_CHARGE.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                totalAmountPaidUnitsSpan.textContent = `₦${totalAmountToPay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                projectedUnitsUnitsSpan.textContent = `${units.toLocaleString(undefined, { maximumFractionDigits: 0 })} units`;
+
+                unitsSummaryDisplay.classList.remove('hidden');
+            }
+
+
+            function calculateAndDisplayVatDeduction() {
+                const amount = parseFloat(amountNairaInput.value);
+                if (withVatRadio.checked && !isNaN(amount) && amount >= 1000) {
+                    const deductedValue = amount / (1 + VAT_RATE);
+                    deductedAmountSpan.textContent = `₦${deductedValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    vatDeductionDisplay.classList.remove('hidden');
+                    updateFinalSummaryNaira(amount);
+                } else {
+                    vatDeductionDisplay.classList.add('hidden');
+                    updateFinalSummaryNaira(amount);
+                }
+            }
+
+            function calculateAndDisplayVatAddition() {
+                const amount = parseFloat(amountNairaInput.value);
+                if (withoutVatRadio.checked && !isNaN(amount) && amount >= 1000) {
+                    const addedValue = amount * (1 + VAT_RATE);
+                    addedAmountSpan.textContent = `₦${addedValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    vatAdditionDisplay.classList.remove('hidden');
+                    updateFinalSummaryNaira(amount);
+                } else {
+                    vatAdditionDisplay.classList.add('hidden');
+                    updateFinalSummaryNaira(amount);
+                }
+            }
+
+            // Toggle visibility of forms based on button clicks
+            if (purchaseNairaBtn && form1 && purchaseKwhBtn && form2 && purchaseUnitsBtn && form3) {
+                purchaseNairaBtn.addEventListener('click', function() {
+                    form1.classList.remove('hidden');
+                    form2.classList.add('hidden'); // Hide form2
+                    form3.classList.add('hidden'); // Hide form3
+                    // Reset form1 fields when shown
+                    amountNairaField.classList.add('hidden');
+                    vatDeductionDisplay.classList.add('hidden');
+                    vatAdditionDisplay.classList.add('hidden');
+                    finalSummaryDisplay.classList.add('hidden');
+                    amountNairaInput.value = '';
+                    withVatRadio.checked = false;
+                    withoutVatRadio.checked = false;
+                    tariffBandSelect.value = "";
+                    mdNonMdSelect.value = "";
+                    discoSelect.value = "";
+                    meterNumberInput.value = "";
+                    phoneNumberInput.value = "";
+                    emailInput.value = "";
+
+                    // Clear form2 fields if it was visible
+                    energyKwhInput.value = '';
+                    discoSelectKwh.value = '';
+                    tariffBandSelectKwh.value = '';
+                    mdNonMdSelectKwh.value = '';
+                    meterNumberInputKwh.value = '';
+                    phoneNumberInputKwh.value = '';
+                    emailInputKwh.value = '';
+                    kwhSummaryDisplay.classList.add('hidden');
+
+                    // Clear form3 fields if it was visible
+                    unitsInput.value = '';
+                    discoSelectUnits.value = '';
+                    tariffBandSelectUnits.value = '';
+                    mdNonMdSelectUnits.value = '';
+                    meterNumberInputUnits.value = '';
+                    phoneNumberInputUnits.value = '';
+                    emailInputUnits.value = '';
+                    unitsSummaryDisplay.classList.add('hidden');
+                });
+
+                purchaseKwhBtn.addEventListener('click', function() {
+                    form2.classList.remove('hidden');
+                    form1.classList.add('hidden'); // Hide form1
+                    form3.classList.add('hidden'); // Hide form3
+                    // Reset form2 fields when shown
+                    energyKwhInput.value = '';
+                    discoSelectKwh.value = '';
+                    tariffBandSelectKwh.value = '';
+                    mdNonMdSelectKwh.value = '';
+                    meterNumberInputKwh.value = '';
+                    phoneNumberInputKwh.value = '';
+                    emailInputKwh.value = '';
+                    kwhSummaryDisplay.classList.add('hidden');
+
+                    // Clear form1 fields if it was visible
+                    amountNairaField.classList.add('hidden');
+                    vatDeductionDisplay.classList.add('hidden');
+                    vatAdditionDisplay.classList.add('hidden');
+                    finalSummaryDisplay.classList.add('hidden');
+                    amountNairaInput.value = '';
+                    withVatRadio.checked = false;
+                    withoutVatRadio.checked = false;
+                    tariffBandSelect.value = "";
+                    mdNonMdSelect.value = "";
+                    discoSelect.value = "";
+                    meterNumberInput.value = "";
+                    phoneNumberInput.value = "";
+                    emailInput.value = "";
+
+                    // Clear form3 fields if it was visible
+                    unitsInput.value = '';
+                    discoSelectUnits.value = '';
+                    tariffBandSelectUnits.value = '';
+                    mdNonMdSelectUnits.value = '';
+                    meterNumberInputUnits.value = '';
+                    phoneNumberInputUnits.value = '';
+                    emailInputUnits.value = '';
+                    unitsSummaryDisplay.classList.add('hidden');
+                });
+
+                purchaseUnitsBtn.addEventListener('click', function() {
+                    form3.classList.remove('hidden');
+                    form1.classList.add('hidden'); // Hide form1
+                    form2.classList.add('hidden'); // Hide form2
+                    // Reset form3 fields when shown
+                    unitsInput.value = '';
+                    discoSelectUnits.value = '';
+                    tariffBandSelectUnits.value = '';
+                    mdNonMdSelectUnits.value = '';
+                    meterNumberInputUnits.value = '';
+                    phoneNumberInputUnits.value = '';
+                    emailInputUnits.value = '';
+                    unitsSummaryDisplay.classList.add('hidden');
+
+                    // Clear form1 fields if it was visible
+                    amountNairaField.classList.add('hidden');
+                    vatDeductionDisplay.classList.add('hidden');
+                    vatAdditionDisplay.classList.add('hidden');
+                    finalSummaryDisplay.classList.add('hidden');
+                    amountNairaInput.value = '';
+                    withVatRadio.checked = false;
+                    withoutVatRadio.checked = false;
+                    tariffBandSelect.value = "";
+                    mdNonMdSelect.value = "";
+                    discoSelect.value = "";
+                    meterNumberInput.value = "";
+                    phoneNumberInput.value = "";
+                    emailInput.value = "";
+
+                    // Clear form2 fields if it was visible
+                    energyKwhInput.value = '';
+                    discoSelectKwh.value = '';
+                    tariffBandSelectKwh.value = '';
+                    mdNonMdSelectKwh.value = '';
+                    meterNumberInputKwh.value = '';
+                    phoneNumberInputKwh.value = '';
+                    emailInputKwh.value = '';
+                    kwhSummaryDisplay.classList.add('hidden');
+                });
+            }
+
+            // Event listeners for Form 1
+            withVatRadio.addEventListener('change', function() {
+                if (this.checked) {
+                    amountNairaField.classList.remove('hidden');
+                    amountNairaInput.focus();
+                    vatAdditionDisplay.classList.add('hidden');
+                    calculateAndDisplayVatDeduction();
+                }
+            });
+
+            withoutVatRadio.addEventListener('change', function() {
+                if (this.checked) {
+                    amountNairaField.classList.remove('hidden');
+                    amountNairaInput.focus();
+                    vatDeductionDisplay.classList.add('hidden');
+                    calculateAndDisplayVatAddition();
+                }
+            });
+
+            amountNairaInput.addEventListener('input', function() {
+                calculateAndDisplayVatDeduction();
+                calculateAndDisplayVatAddition();
+            });
+
+            // Event listener for Form 2
+            energyKwhInput.addEventListener('input', function() {
+                updateFinalSummaryKwh(parseFloat(energyKwhInput.value));
+            });
+
+            // Event listener for Form 3
+            unitsInput.addEventListener('input', function() {
+                updateFinalSummaryUnits(parseFloat(unitsInput.value));
+            });
+
+            // Add event listener for the "Buy Now" button (Form 1)
+            if (buyNowBtn) {
+                buyNowBtn.addEventListener('click', function() {
+                    console.log('Buy Now button (Naira) clicked!');
+                    alert('Simulating Naira purchase... (In a real app, this would go to a payment gateway)');
+                });
+            }
+
+            // Add event listener for the new "Buy Now (KW/h)" button (Form 2)
+            if (buyNowKwhBtn) {
+                buyNowKwhBtn.addEventListener('click', function() {
+                    console.log('Buy Now (KW/h) button clicked!');
+                    alert('Simulating KW/h purchase... (In a real app, this would go to a payment gateway)');
+                });
+            }
+
+            // Add event listener for the new "Buy Now (Units)" button (Form 3)
+            if (buyNowUnitsBtn) {
+                buyNowUnitsBtn.addEventListener('click', function() {
+                    console.log('Buy Now (Units) button clicked!');
+                    alert('Simulating Units purchase... (In a real app, this would go to a payment gateway)');
+                });
+            }
+
+            // Event listeners for new recommendation buttons
+            if (energySavingsBtn) {
+                energySavingsBtn.addEventListener('click', function() {
+                    alert('Energy Savings tips coming soon!');
+                });
+            }
+            if (solarRecommendationBtn) {
+                solarRecommendationBtn.addEventListener('click', function() {
+                    alert('Solar Recommendation feature coming soon!');
+                });
+            }
+            if (calculateEnergyBtn) {
+                calculateEnergyBtn.addEventListener('click', function() {
+                    alert('Energy Calculation tool coming soon!');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

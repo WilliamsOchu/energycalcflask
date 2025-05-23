@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for, flash
+
 
 app = Flask(__name__)
 
@@ -191,6 +192,37 @@ def cost_calculator():
     return render_template('cost_calculator.html',
                            total_cost=total_cost,
                            error=error)
+
+@app.route('/buy_energy', methods=['GET', 'POST'])
+def buy_energy():
+    if request.method == 'POST':
+        energy_amount = request.form.get('energy_amount')
+        payment_method = request.form.get('payment_method')
+
+        if not energy_amount or not payment_method:
+            flash('Please fill in all fields.', 'danger')
+            return redirect(url_for('buy_energy'))
+
+        try:
+            energy_amount = int(energy_amount)
+            if energy_amount <= 0:
+                flash('Energy amount must be positive.', 'danger')
+                return redirect(url_for('buy_energy'))
+        except ValueError:
+            flash('Invalid energy amount.', 'danger')
+            return redirect(url_for('buy_energy'))
+
+        # --- Here's where your "buy energy" logic would go ---
+        # This could involve:
+        # - Integrating with a payment gateway (e.g., Stripe, PayPal, Paystack)
+        # - Updating a user's energy balance in a database
+        # - Logging the transaction
+        # For demonstration, we'll just show a success message.
+
+        flash(f'Successfully purchased {energy_amount} units of energy using {payment_method}.', 'success')
+        return redirect(url_for('purchase_success'))
+
+    return render_template('buy_energy.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
